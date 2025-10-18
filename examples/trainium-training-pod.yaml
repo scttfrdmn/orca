@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: llm-training-trainium
+  namespace: default
+  annotations:
+    # AWS Trainium for cost-effective LLM training
+    orca.research/instance-type: "trn2.48xlarge"  # 16x Trainium2 chips
+    # ~50% cost reduction vs P5 for training
+    orca.research/launch-type: "on-demand"
+    # Budget tracking
+    orca.research/budget-namespace: "ml-team"
+spec:
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  tolerations:
+    - key: orca.research/burst-node
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  restartPolicy: Never
+
+  containers:
+    - name: trainer
+      # Use AWS Neuron SDK image
+      image: public.ecr.aws/neuron/pytorch-training-neuronx:2.1.0-neuronx-py310
+      command:
+        - python3
+        - train.py
+
+      resources:
+        requests:
+          cpu: "100"
+          memory: "1Ti"
+          aws.amazon.com/neuron: "16"  # Request 16 Trainium cores
+        limits:
+          aws.amazon.com/neuron: "16"
+
+      env:
+        - name: NEURON_RT_NUM_CORES
+          value: "16"
+        - name: NEURON_COMPILE_CACHE_URL
+          value: "/tmp/neuron-cache"
+
+      volumeMounts:
+        - name: neuron-cache
+          mountPath: /tmp/neuron-cache
+
+  volumes:
+    - name: neuron-cache
+      emptyDir: {}

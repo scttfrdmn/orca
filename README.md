@@ -15,7 +15,7 @@ ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet p
 ### Key Features
 
 - 🎓 **Research-First Design** - Built for academic and research workloads
-- 🖥️ **GPU-Optimized** - First-class support for AI/ML with latest NVIDIA GPUs (P6, P5, P4d, G6e, G6, etc.)
+- 🖥️ **AI/ML Accelerators** - Support for NVIDIA GPUs (P6, P5, P4d, G6e), AWS Trainium, Inferentia, and FPGAs (F2)
 - 🎯 **Explicit Control** - Users specify exact instance types, not guessed
 - 💰 **Cost-Aware** - Budget controls, cost tracking, spot instance support
 - 🔓 **Open Source** - Apache 2.0 licensed, community-driven
@@ -37,7 +37,10 @@ ORCA v0.2.0+ will support targeting Capacity Reservations. See [docs/CAPACITY-RE
 
 ### Use Cases
 
-- **AI/ML Training** - Burst large model training to AWS GPUs
+- **AI/ML Training** - Burst large model training to AWS GPUs, Trainium, or Inferentia
+- **Cost-Optimized Training** - Use Trainium for 50% lower training costs vs GPUs
+- **High-Throughput Inference** - Deploy on Inferentia for 70% lower inference costs
+- **Custom Acceleration** - FPGA support for specialized compute (genomics, finance, etc.)
 - **Batch Processing** - Scale compute-intensive jobs elastically
 - **Research Computing** - Access specialized hardware on-demand
 - **Multi-Tenant** - Support multiple departments with separate budgets

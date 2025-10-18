@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: llm-inference-inferentia
+  namespace: default
+  annotations:
+    # AWS Inferentia for cost-effective inference
+    orca.research/instance-type: "inf2.24xlarge"  # 6x Inferentia2 chips
+    # ~70% cost reduction vs GPU inference
+    orca.research/launch-type: "on-demand"
+spec:
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  tolerations:
+    - key: orca.research/burst-node
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  containers:
+    - name: inference
+      # Use AWS Neuron SDK image
+      image: public.ecr.aws/neuron/pytorch-inference-neuronx:2.1.0-neuronx-py310
+      command:
+        - python3
+        - serve.py
+
+      resources:
+        requests:
+          cpu: "50"
+          memory: "128Gi"
+          aws.amazon.com/neuron: "6"  # Request 6 Inferentia cores
+        limits:
+          aws.amazon.com/neuron: "6"
+
+      env:
+        - name: NEURON_RT_NUM_CORES
+          value: "6"
+        - name: MODEL_PATH
+          value: "/models/llama-7b-neuron"
+
+      ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+
+      volumeMounts:
+        - name: models
+          mountPath: /models
+          readOnly: true
+
+  volumes:
+    - name: models
+      emptyDir: {}  # In production, use persistent storage

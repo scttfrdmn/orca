@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fpga-genomics
+  namespace: default
+  annotations:
+    # AWS FPGA for custom acceleration
+    orca.research/instance-type: "f2.16xlarge"  # 4x Xilinx Alveo U250 FPGAs
+    orca.research/launch-type: "on-demand"
+    # FPGAs are best for long-running jobs to amortize programming time
+spec:
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  tolerations:
+    - key: orca.research/burst-node
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  restartPolicy: Never
+
+  containers:
+    - name: fpga-app
+      # Use AWS FPGA Developer AMI or custom image
+      image: your-fpga-image:latest
+      command:
+        - ./fpga-genomics-pipeline
+
+      resources:
+        requests:
+          cpu: "32"
+          memory: "512Gi"
+          aws.amazon.com/fpga: "4"  # Request 4 FPGAs
+        limits:
+          aws.amazon.com/fpga: "4"
+
+      env:
+        # AFI (Amazon FPGA Image) ID
+        - name: AWS_FPGA_AFI_ID
+          value: "agfi-xxxxxxxxxxxxxxxxx"
+
+      volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: results
+          mountPath: /results
+
+  volumes:
+    - name: data
+      emptyDir: {}  # In production, use EBS or S3
+    - name: results
+      emptyDir: {}
