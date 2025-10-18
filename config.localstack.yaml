@@ -5,7 +5,7 @@ aws:
   region: us-east-1
 
   # LocalStack endpoint
-  localStackEndpoint: "http://localhost:4566"
+  localStackEndpoint: "http://localhost:4567"
 
   # Dummy credentials for LocalStack
   credentials:
@@ -14,10 +14,10 @@ aws:
 
   # LocalStack doesn't require real VPC/subnet IDs
   # But we need to create them first
-  vpcID: "vpc-12345"
-  subnetID: "subnet-12345"
+  vpcID: "vpc-e68811551db93c2d3"
+  subnetID: "subnet-bb18c3d085dc6ea16"
   securityGroupIDs:
-    - "sg-12345"
+    - "sg-c703ae0e62d7fddd1"
 
   # Use any AMI ID - LocalStack doesn't validate
   amiID: "ami-12345"

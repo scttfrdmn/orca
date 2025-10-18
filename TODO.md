@@ -36,15 +36,16 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 
 ### Testing
 - [x] Add unit tests for `internal/aws/client.go` with AWS SDK mocks
+- [x] Create integration tests using LocalStack
 - [ ] Add unit tests for `pkg/provider` with mocks
 - [ ] Add unit tests for `pkg/config` with validation tests
-- [ ] Create integration tests using LocalStack
 - [ ] Add end-to-end smoke tests
 - [ ] Set up test coverage reporting
 
 **Current Test Coverage:**
-- `pkg/instances`: ✅ 21 tests passing (explicit, template, auto selectors)
-- `internal/aws`: ✅ 30 tests passing (all helper methods + EC2 operations)
+- `pkg/instances`: ✅ 21 unit tests passing (explicit, template, auto selectors)
+- `internal/aws`: ✅ 30 unit tests passing (all helper methods + EC2 operations)
+- `internal/aws`: ✅ 2 integration tests passing (LocalStack: create/describe/terminate, spot instances)
 - `pkg/provider`: ❌ No tests
 - `pkg/config`: ❌ No tests
 
@@ -157,10 +158,11 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 - [x] Create configuration management
 - [x] Implement AWS EC2 client
 - [x] Add unit tests for AWS client with mocks (30 tests)
+- [x] Add integration tests with LocalStack (2 tests)
 - [x] Integrate provider with AWS client
 - [x] Create main application entry point
-- [x] Add LocalStack support
-- [x] Create LocalStack setup script
+- [x] Add LocalStack support and configuration
+- [x] Create LocalStack setup and test scripts
 - [x] Add LocalStack documentation
 - [x] Achieve Go Report Card A+ grade
 - [x] Create GitHub repository

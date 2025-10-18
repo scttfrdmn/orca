@@ -19,8 +19,7 @@ echo ""
 echo "Starting LocalStack container..."
 docker run -d \
     --name orca-localstack \
-    -p 4566:4566 \
-    -p 4510-4559:4510-4559 \
+    -p 4567:4566 \
     -e SERVICES=ec2 \
     -e DEBUG=1 \
     -e DOCKER_HOST=unix:///var/run/docker.sock \
@@ -34,7 +33,7 @@ sleep 10
 max_attempts=30
 attempt=0
 while [ $attempt -lt $max_attempts ]; do
-    if curl -s http://localhost:4566/_localstack/health | grep -q "\"ec2\": \"available\""; then
+    if curl -s http://localhost:4567/_localstack/health | grep -q "\"ec2\": \"available\""; then
         echo "✅ LocalStack is ready!"
         break
     fi
@@ -54,14 +53,14 @@ echo "Configuring AWS CLI for LocalStack..."
 export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
 export AWS_DEFAULT_REGION=us-east-1
-export AWS_ENDPOINT_URL=http://localhost:4566
+export AWS_ENDPOINT_URL=http://localhost:4567
 
 # Create VPC
 echo ""
 echo "Creating VPC..."
 VPC_ID=$(aws ec2 create-vpc \
     --cidr-block 10.0.0.0/16 \
-    --endpoint-url http://localhost:4566 \
+    --endpoint-url http://localhost:4567 \
     --query 'Vpc.VpcId' \
     --output text)
 echo "   VPC ID: $VPC_ID"
@@ -71,7 +70,7 @@ echo "Creating subnet..."
 SUBNET_ID=$(aws ec2 create-subnet \
     --vpc-id $VPC_ID \
     --cidr-block 10.0.1.0/24 \
-    --endpoint-url http://localhost:4566 \
+    --endpoint-url http://localhost:4567 \
     --query 'Subnet.SubnetId' \
     --output text)
 echo "   Subnet ID: $SUBNET_ID"
@@ -82,7 +81,7 @@ SG_ID=$(aws ec2 create-security-group \
     --group-name orca-test-sg \
     --description "ORCA test security group" \
     --vpc-id $VPC_ID \
-    --endpoint-url http://localhost:4566 \
+    --endpoint-url http://localhost:4567 \
     --query 'GroupId' \
     --output text)
 echo "   Security Group ID: $SG_ID"
@@ -107,7 +106,7 @@ echo "Environment variables:"
 echo "  export AWS_ACCESS_KEY_ID=test"
 echo "  export AWS_SECRET_ACCESS_KEY=test"
 echo "  export AWS_DEFAULT_REGION=us-east-1"
-echo "  export AWS_ENDPOINT_URL=http://localhost:4566"
+echo "  export AWS_ENDPOINT_URL=http://localhost:4567"
 echo ""
 echo "To test ORCA with LocalStack:"
 echo "  ./bin/orca --config config.localstack.yaml"
