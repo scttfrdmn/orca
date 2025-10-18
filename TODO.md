@@ -32,6 +32,26 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 - `pkg/provider/provider.go:352-356` (RunInContainer)
 - `pkg/provider/provider.go:358-374` (GetStatsSummary)
 
+## Critical - GPU/ML Features
+
+### AWS Capacity Reservations for ML
+- [ ] Add support for AWS On-Demand Capacity Reservations (ODCRs)
+- [ ] Add support for Capacity Blocks for ML (reserved GPU capacity)
+- [ ] Implement capacity reservation targeting via pod annotations
+- [ ] Add automatic capacity reservation discovery and matching
+- [ ] Document capacity reservation best practices for GPU workloads
+
+**Why This Matters:**
+- ODCRs guarantee GPU instance availability (critical for expensive training jobs)
+- Capacity Blocks provide guaranteed access to high-demand instances (P5, P4d)
+- Prevents "InsufficientInstanceCapacity" errors during peak times
+- Cost optimization: pay for reservation, use spot pricing for compute
+
+**Related Annotations:**
+- `orca.research/capacity-reservation-id`: Target specific reservation
+- `orca.research/capacity-reservation-preference`: open | targeted
+- `orca.research/use-capacity-blocks`: true/false
+
 ## High Priority
 
 ### Testing
