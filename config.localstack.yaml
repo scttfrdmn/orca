@@ -1,0 +1,89 @@
+# ORCA Configuration for LocalStack Testing
+# Use this for local development without AWS charges
+
+aws:
+  region: us-east-1
+
+  # LocalStack endpoint
+  localStackEndpoint: "http://localhost:4566"
+
+  # Dummy credentials for LocalStack
+  credentials:
+    accessKeyID: "test"
+    secretAccessKey: "test"
+
+  # LocalStack doesn't require real VPC/subnet IDs
+  # But we need to create them first
+  vpcID: "vpc-12345"
+  subnetID: "subnet-12345"
+  securityGroupIDs:
+    - "sg-12345"
+
+  # Use any AMI ID - LocalStack doesn't validate
+  amiID: "ami-12345"
+
+  developmentMode: true
+
+node:
+  name: orca-localstack-node
+
+  labels:
+    orca.research/provider: "aws"
+    orca.research/environment: "localstack"
+
+  taints:
+    - key: orca.research/burst-node
+      value: "true"
+      effect: NoSchedule
+
+  operatingSystem: Linux
+  cpu: "1000"
+  memory: "2Ti"
+  pods: "1000"
+  gpu: "100"
+
+instances:
+  selectionMode: explicit
+
+  templates:
+    test-small:
+      instanceType: t3.small
+      launchType: on-demand
+
+    test-gpu:
+      instanceType: g5.xlarge
+      launchType: on-demand
+
+  defaultLaunchType: on-demand
+
+  # For LocalStack, allow all instance types
+  allowedInstanceTypes:
+    - t3.small
+    - t3.medium
+    - g5.xlarge
+    - p5.48xlarge
+
+limits:
+  maxConcurrentInstances: 10
+  maxInstancesPerNamespace: 5
+  dailyBudget: 1000.00
+  monthlyBudget: 10000.00
+  maxInstanceLifetime: 1h
+
+logging:
+  level: debug
+  format: json
+  logAWSCalls: true
+
+metrics:
+  enabled: true
+  port: 8080
+  path: /metrics
+  prometheus:
+    enabled: true
+
+development:
+  mockAWS: false  # Use LocalStack instead
+  dryRun: false
+  enableFastCleanup: true
+  cleanupInterval: 30s
