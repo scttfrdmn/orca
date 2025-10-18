@@ -153,17 +153,29 @@ func LoadConfig(path string) (*Config, error) {
 
 // Validate validates the configuration.
 func (c *Config) Validate() error {
-	// Validate AWS config
+	if err := c.validateAWS(); err != nil {
+		return err
+	}
+	if err := c.validateNode(); err != nil {
+		return err
+	}
+	if err := c.validateInstances(); err != nil {
+		return err
+	}
+	c.setDefaults()
+	return nil
+}
+
+func (c *Config) validateAWS() error {
 	if c.AWS.Region == "" {
 		return fmt.Errorf("aws.region is required")
 	}
+	return nil
+}
 
-	// Validate node config
+func (c *Config) validateNode() error {
 	if c.Node.Name == "" {
 		return fmt.Errorf("node.name is required")
-	}
-	if c.Node.OperatingSystem == "" {
-		c.Node.OperatingSystem = "Linux"
 	}
 	if c.Node.CPU == "" {
 		return fmt.Errorf("node.cpu is required")
@@ -174,36 +186,42 @@ func (c *Config) Validate() error {
 	if c.Node.Pods == "" {
 		return fmt.Errorf("node.pods is required")
 	}
+	return nil
+}
 
-	// Validate instances config
+func (c *Config) validateInstances() error {
+	validModes := map[string]bool{"explicit": true, "template": true, "auto": true}
+	if c.Instances.SelectionMode != "" && !validModes[c.Instances.SelectionMode] {
+		return fmt.Errorf("instances.selectionMode must be explicit, template, or auto")
+	}
+
+	validLaunchTypes := map[string]bool{"on-demand": true, "spot": true}
+	if c.Instances.DefaultLaunchType != "" && !validLaunchTypes[c.Instances.DefaultLaunchType] {
+		return fmt.Errorf("instances.defaultLaunchType must be on-demand or spot")
+	}
+	return nil
+}
+
+func (c *Config) setDefaults() {
+	if c.Node.OperatingSystem == "" {
+		c.Node.OperatingSystem = "Linux"
+	}
 	if c.Instances.SelectionMode == "" {
 		c.Instances.SelectionMode = "explicit"
-	}
-	if c.Instances.SelectionMode != "explicit" && c.Instances.SelectionMode != "template" && c.Instances.SelectionMode != "auto" {
-		return fmt.Errorf("instances.selectionMode must be explicit, template, or auto")
 	}
 	if c.Instances.DefaultLaunchType == "" {
 		c.Instances.DefaultLaunchType = "on-demand"
 	}
-	if c.Instances.DefaultLaunchType != "on-demand" && c.Instances.DefaultLaunchType != "spot" {
-		return fmt.Errorf("instances.defaultLaunchType must be on-demand or spot")
-	}
-
-	// Validate logging config
 	if c.Logging.Level == "" {
 		c.Logging.Level = "info"
 	}
 	if c.Logging.Format == "" {
 		c.Logging.Format = "json"
 	}
-
-	// Validate metrics config
 	if c.Metrics.Port == 0 {
 		c.Metrics.Port = 8080
 	}
 	if c.Metrics.Path == "" {
 		c.Metrics.Path = "/metrics"
 	}
-
-	return nil
 }
