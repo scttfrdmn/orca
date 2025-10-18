@@ -5,8 +5,6 @@
 
 **ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises clusters to AWS, with native support for GPU-intensive AI/ML computing.
 
-Built by AWS in partnership with the National Research Platform and San Diego State University.
-
 ---
 
 ## Overview
@@ -33,28 +31,28 @@ ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet p
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────┐
-│  Research Cluster (e.g., NRP Nautilus) │
-│                                         │
-│  ┌──────────────────────────────────┐  │
-│  │  ORCA Virtual Node               │  │
-│  │  (Virtual Kubelet Provider)      │  │
-│  └──────────────┬───────────────────┘  │
-└─────────────────┼───────────────────────┘
+```text
+┌──────────────────────────────────────────┐
+│  Research Cluster (e.g., NRP Nautilus)  │
+│                                          │
+│  ┌────────────────────────────────────┐ │
+│  │  ORCA Virtual Node                 │ │
+│  │  (Virtual Kubelet Provider)        │ │
+│  └──────────────┬─────────────────────┘ │
+└─────────────────┼────────────────────────┘
                   │
                   │ Secure Connection
                   │
-┌─────────────────▼───────────────────────┐
-│  AWS Account                            │
-│  ┌──────────────────────────────────┐  │
-│  │  VPC                             │  │
-│  │  ┌────────┐ ┌────────┐ ┌──────┐ │  │
-│  │  │ EC2    │ │ EC2    │ │ EC2  │ │  │
-│  │  │ (GPU)  │ │ (GPU)  │ │ (GPU)│ │  │
-│  │  └────────┘ └────────┘ └──────┘ │  │
-│  └──────────────────────────────────┘  │
-└─────────────────────────────────────────┘
+┌─────────────────▼────────────────────────┐
+│  AWS Account                             │
+│  ┌────────────────────────────────────┐  │
+│  │  VPC                               │  │
+│  │  ┌────────┐ ┌────────┐ ┌────────┐ │  │
+│  │  │ EC2    │ │ EC2    │ │ EC2    │ │  │
+│  │  │ (GPU)  │ │ (GPU)  │ │ (GPU)  │ │  │
+│  │  └────────┘ └────────┘ └────────┘ │  │
+│  └────────────────────────────────────┘  │
+└──────────────────────────────────────────┘
 ```
 
 When a pod with specific tolerations is scheduled:
