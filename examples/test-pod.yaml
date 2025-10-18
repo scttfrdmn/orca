@@ -1,0 +1,50 @@
+# Simple test pod for ORCA development
+# Uses t3.small (cheapest instance) for testing
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: orca-test-pod
+  annotations:
+    # Explicit instance selection
+    orca.research/instance-type: "t3.small"
+    orca.research/launch-type: "on-demand"
+
+    # Development mode - add extra logging
+    orca.research/debug: "true"
+spec:
+  # Target the ORCA virtual node
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  # Tolerate the burst node taint
+  tolerations:
+  - key: orca.research/burst-node
+    operator: Equal
+    value: "true"
+    effect: NoSchedule
+
+  containers:
+  - name: test
+    image: busybox:latest
+    command:
+      - sh
+      - -c
+      - |
+        echo "Hello from ORCA!"
+        echo "This pod is running on AWS EC2 instance type: t3.small"
+        echo "Hostname: $(hostname)"
+        echo "Uptime: $(uptime)"
+        echo ""
+        echo "Sleeping for 5 minutes for testing..."
+        sleep 300
+        echo "Test complete!"
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+  restartPolicy: Never

@@ -1,0 +1,141 @@
+# ORCA Development Configuration
+# For local testing with kind + AWS
+
+aws:
+  # Your AWS configuration
+  region: us-west-2
+
+  # Credentials (can also use ~/.aws/credentials or IAM role)
+  # credentials:
+  #   accessKeyID: AKIA...
+  #   secretAccessKey: your-secret-key
+
+  # VPC Configuration (use existing VPC or create one)
+  vpcID: vpc-xxxxx  # Replace with your VPC ID
+  subnetID: subnet-xxxxx  # Replace with your subnet ID
+  securityGroupIDs:
+    - sg-xxxxx  # Replace with your security group ID
+
+  # Optional: Use specific AMI
+  # amiID: ami-xxxxx
+
+  # Development mode - adds extra logging and safeguards
+  developmentMode: true
+
+node:
+  # Virtual node name in Kubernetes
+  name: orca-dev-node
+
+  # Node labels that pods can select
+  labels:
+    orca.research/provider: "aws"
+    orca.research/environment: "development"
+
+  # Taints to ensure only burst pods land here
+  taints:
+    - key: orca.research/burst-node
+      value: "true"
+      effect: NoSchedule
+
+  # Advertised capacity (limits what K8s will schedule)
+  operatingSystem: Linux
+  cpu: "1000"        # 1000 vCPUs available
+  memory: "2Ti"      # 2 TiB memory available
+  pods: "1000"       # Max 1000 pods
+  gpu: "100"         # 100 GPUs available
+
+instances:
+  # Instance selection mode
+  selectionMode: explicit  # explicit, template, or auto
+
+  # Templates for common workloads
+  templates:
+    llm-training:
+      instanceType: p5.48xlarge
+      launchType: spot
+      maxSpotPrice: "50.00"
+
+    vision-training:
+      instanceType: g5.4xlarge
+      launchType: spot
+      maxSpotPrice: "2.00"
+
+    inference:
+      instanceType: g6.2xlarge
+      launchType: on-demand
+
+    cpu-batch:
+      instanceType: c7i.8xlarge
+      launchType: spot
+      maxSpotPrice: "1.50"
+
+    # Small instance for testing
+    dev-test:
+      instanceType: t3.small
+      launchType: on-demand
+
+  # Default launch type if not specified
+  defaultLaunchType: on-demand
+
+  # Allowed instance types (safety check)
+  allowedInstanceTypes:
+    - t3.small       # Development/testing
+    - t3.medium
+    - g5.xlarge      # Small GPU
+    - g5.4xlarge     # Medium GPU
+    - p5.48xlarge    # Large GPU (expensive!)
+
+  # Maximum spot price limits (safety check)
+  maxSpotPrices:
+    t3.small: "0.10"
+    t3.medium: "0.20"
+    g5.xlarge: "2.00"
+    g5.4xlarge: "5.00"
+    p5.48xlarge: "60.00"
+
+limits:
+  # Budget controls
+  maxConcurrentInstances: 5  # Limit for development
+  maxInstancesPerNamespace: 3
+
+  # Cost controls
+  dailyBudget: 50.00  # $50/day limit for dev
+  monthlyBudget: 500.00  # $500/month limit
+
+  # Time controls
+  maxInstanceLifetime: 4h  # Auto-terminate after 4 hours
+
+  # Namespace quotas (optional)
+  namespaceQuotas:
+    default:
+      maxInstances: 2
+      maxGPUs: 2
+      dailyBudget: 20.00
+
+logging:
+  level: debug  # debug, info, warn, error
+  format: json  # json or text
+
+  # Log AWS API calls for debugging
+  logAWSCalls: true
+
+metrics:
+  enabled: true
+  port: 8080
+  path: /metrics
+
+  # Prometheus metrics endpoint
+  prometheus:
+    enabled: true
+
+# Development-specific settings
+development:
+  # Mock AWS mode - don't create real instances
+  mockAWS: false  # Set to true to test without AWS charges
+
+  # Dry-run mode - log what would happen but don't do it
+  dryRun: false
+
+  # Fast cleanup for development
+  enableFastCleanup: true
+  cleanupInterval: 1m
