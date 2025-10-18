@@ -1,6 +1,31 @@
 # AWS Capacity Reservations for ML Workloads
 
-ORCA will support AWS Capacity Reservations to guarantee GPU instance availability for critical ML/AI workloads.
+## ⚠️ Critical Requirement for Modern GPUs
+
+**IMPORTANT**: AWS Capacity Reservations are not optional for modern NVIDIA GPU instances. They are **effectively required** to get access to recent GPU hardware (P5, P4d, P4de, G6e).
+
+**Reality of AWS GPU Availability (October 2025):**
+- **P6.48xlarge** (Blackwell B200): Latest generation, Capacity Reservations required
+- **P5e.48xlarge** (H200 141GB): Capacity Reservations required
+- **P5.48xlarge** (H100 80GB): Virtually impossible without Capacity Reservations
+- **P4de.24xlarge** (A100 80GB): Capacity Reservations required in most regions
+- **P4d.24xlarge** (A100 40GB): Extremely limited on-demand availability
+- **G6e.48xlarge** (L40S): Better availability but still constrained during peak
+- **G6.48xlarge** (L4): More available but still benefits from reservations
+
+**Without Capacity Reservations:**
+- `InsufficientInstanceCapacity` errors are the norm, not the exception
+- May wait hours/days for spot instances to become available
+- On-demand launches fail even when willing to pay full price
+- Cannot plan or schedule research workloads with confidence
+
+**With Capacity Reservations:**
+- Guaranteed access to reserved capacity
+- Launch instances immediately when needed
+- Can schedule and plan research timelines
+- Essential for any serious ML/AI research
+
+**Conclusion**: For ORCA to be viable for GPU-intensive research, Capacity Reservations support must be a **top priority**, not a "nice to have" feature.
 
 ## What are Capacity Reservations?
 
@@ -84,11 +109,17 @@ Total Cost = Reservation Fee + Instance Usage
 - **Instance Usage**: Standard on-demand or spot pricing when running
 - **Cancellation**: Can cancel anytime, stop paying reservation fee
 
-**Example**: P5.48xlarge ODCR
+**Example**: P5.48xlarge (H100) ODCR
 - ODCR fee: ~$1-2/hour (varies by region)
 - On-demand: ~$98/hour when instance running
 - Total when running: ~$99-100/hour
 - Total when idle: ~$1-2/hour (reservation only)
+
+**Example**: P6.48xlarge (B200) ODCR (2025 pricing)
+- ODCR fee: ~$2-3/hour (varies by region)
+- On-demand: ~$115/hour when instance running (estimated)
+- Total when running: ~$117-118/hour
+- Total when idle: ~$2-3/hour (reservation only)
 
 ### Capacity Blocks Pricing
 
@@ -316,14 +347,38 @@ orca_capacity_reservation_cost_per_hour
 
 ## Timeline
 
-- **Phase 1** (Current): Manual ODCR management outside ORCA
-- **Phase 2** (v0.2.0): ODCR annotation support
-- **Phase 3** (v0.3.0): Automatic ODCR discovery and matching
+**REVISED PRIORITY**: Given that Capacity Reservations are effectively required for modern GPU instances, this feature timeline is accelerated:
+
+- **Phase 1** (v0.1.0 - Current): Manual ODCR management outside ORCA
+  - Users create reservations manually
+  - Document workarounds and best practices
+  - ORCA can launch into existing reservations if configured
+
+- **Phase 2** (v0.2.0 - **CRITICAL PRIORITY**): Basic ODCR support
+  - Target specific capacity reservations via annotation
+  - `orca.research/capacity-reservation-id` support
+  - Fail gracefully with clear error if reservation unavailable
+  - Document ODCR setup for P5/P4d instances
+
+- **Phase 3** (v0.3.0 - **HIGH PRIORITY**): Automatic ODCR discovery
+  - Query available capacity reservations for instance type
+  - Automatic matching and selection
+  - Prefer reserved capacity over on-demand
+  - Metrics and monitoring for reservation utilization
+
 - **Phase 4** (v0.4.0): Capacity Blocks support
-- **Phase 5** (v0.5.0): ORCA capacity management CLI
+  - Support Capacity Block targeting
+  - Plan ahead for scheduled workloads
+  - Integration with workload scheduling
+
+- **Phase 5** (v0.5.0): Advanced capacity management
+  - ORCA capacity management CLI
+  - Automated reservation lifecycle
+  - Team-based reservation pools
+  - Cost allocation and chargeback
 
 ---
 
-**Status**: 🚧 Planned Feature - Coming in v0.2.0+
+**Status**: 🚨 **CRITICAL FEATURE** - Phase 2 (v0.2.0) is essential for GPU workloads
 
-For now, users can manually create ODCRs and target them when available.
+**Current Workaround**: Users must manually create ODCRs and configure ORCA to use them. Without this, modern GPU instances (P5, P4d) are effectively unavailable.

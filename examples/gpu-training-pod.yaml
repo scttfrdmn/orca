@@ -5,12 +5,14 @@ metadata:
   name: gpu-training-job
   namespace: default
   annotations:
-    # Large GPU instance for LLM training
-    orca.research/instance-type: "p5.48xlarge"  # 8x H100 GPUs
-    # Use spot for 70% cost savings
+    # Latest GPU instance for LLM training
+    orca.research/instance-type: "p6.48xlarge"  # 8x B200 GPUs (Blackwell)
+    # NOTE: P6 instances require Capacity Reservations
+    # orca.research/capacity-reservation-id: "cr-xxxxx"  # v0.2.0+
+    # Use spot for cost savings (if available)
     orca.research/launch-type: "spot"
     # Set max spot price
-    orca.research/max-spot-price: "32.00"
+    orca.research/max-spot-price: "35.00"
     # Budget tracking
     orca.research/budget-namespace: "ml-team"
 spec:

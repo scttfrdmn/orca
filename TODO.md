@@ -34,23 +34,49 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 
 ## Critical - GPU/ML Features
 
-### AWS Capacity Reservations for ML
-- [ ] Add support for AWS On-Demand Capacity Reservations (ODCRs)
-- [ ] Add support for Capacity Blocks for ML (reserved GPU capacity)
-- [ ] Implement capacity reservation targeting via pod annotations
-- [ ] Add automatic capacity reservation discovery and matching
-- [ ] Document capacity reservation best practices for GPU workloads
+### AWS Capacity Reservations for ML - 🚨 ESSENTIAL FOR GPU INSTANCES
 
-**Why This Matters:**
-- ODCRs guarantee GPU instance availability (critical for expensive training jobs)
-- Capacity Blocks provide guaranteed access to high-demand instances (P5, P4d)
-- Prevents "InsufficientInstanceCapacity" errors during peak times
-- Cost optimization: pay for reservation, use spot pricing for compute
+**CRITICAL REALITY**: Modern NVIDIA GPU instances (P5, P4d, P4de, G6e) are **virtually unavailable** without Capacity Reservations. This is not an optional feature—it's required for ORCA to be viable for GPU research.
+
+**v0.2.0 - CRITICAL PRIORITY:**
+- [ ] Add support for targeting specific ODCRs via annotation
+- [ ] Implement `orca.research/capacity-reservation-id` annotation
+- [ ] Add capacity reservation configuration in config.yaml
+- [ ] Fail gracefully with clear error messages when reservations unavailable
+- [ ] Document ODCR creation and configuration for P5/P4d
+- [ ] Add example configurations for common GPU reservation scenarios
+
+**v0.3.0 - HIGH PRIORITY:**
+- [ ] Implement automatic ODCR discovery via EC2 API
+- [ ] Add capacity reservation preference: `open` | `targeted`
+- [ ] Prefer reserved capacity over on-demand automatically
+- [ ] Add metrics for reservation utilization
+- [ ] Add support for Capacity Blocks for ML
+
+**v0.4.0+:**
+- [ ] ORCA capacity management CLI
+- [ ] Automated reservation lifecycle management
+- [ ] Team-based reservation pools and cost allocation
+
+**Why This Is Critical (October 2025):**
+- **P6.48xlarge (B200)**: Latest generation, virtually impossible without reservations
+- **P5e.48xlarge (H200)**: Reservations required
+- **P5.48xlarge (H100)**: Virtually impossible without reservations
+- **P4de.24xlarge (A100 80GB)**: Reservations required in most regions
+- **P4d.24xlarge (A100 40GB)**: Extremely limited on-demand availability
+- **G6e (L40S)**: Constrained during peak usage
+- **Reality**: `InsufficientInstanceCapacity` is the norm without reservations
+- **Impact**: Researchers cannot run modern GPU workloads without this feature
+
+**Related AWS Concepts:**
+- On-Demand Capacity Reservations (ODCRs): Reserve GPU capacity by the hour
+- Capacity Blocks for ML: Reserve GPU capacity weeks/months in advance
+- Prevents "InsufficientInstanceCapacity" errors (common for P5/P4d)
 
 **Related Annotations:**
-- `orca.research/capacity-reservation-id`: Target specific reservation
-- `orca.research/capacity-reservation-preference`: open | targeted
-- `orca.research/use-capacity-blocks`: true/false
+- `orca.research/capacity-reservation-id`: Target specific reservation (v0.2.0)
+- `orca.research/capacity-reservation-preference`: open | targeted (v0.3.0)
+- `orca.research/capacity-block-id`: Use Capacity Block (v0.4.0)
 
 ## High Priority
 

@@ -15,11 +15,25 @@ ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet p
 ### Key Features
 
 - 🎓 **Research-First Design** - Built for academic and research workloads
-- 🖥️ **GPU-Optimized** - First-class support for AI/ML with all NVIDIA GPU types (P6, P5, G6e, etc.)
+- 🖥️ **GPU-Optimized** - First-class support for AI/ML with latest NVIDIA GPUs (P6, P5, P4d, G6e, G6, etc.)
 - 🎯 **Explicit Control** - Users specify exact instance types, not guessed
 - 💰 **Cost-Aware** - Budget controls, cost tracking, spot instance support
-- 🌊 **NRP Integration** - Native support for National Research Platform features
 - 🔓 **Open Source** - Apache 2.0 licensed, community-driven
+
+### ⚠️ Important: AWS Capacity Reservations
+
+**Latest GPU instances (P6, P5, P4de, P4d, G6e) are virtually unavailable without AWS Capacity Reservations.** This is the reality of GPU availability on AWS in 2025, not a limitation of ORCA.
+
+- **P6.48xlarge (Blackwell B200)**: Capacity Reservations required
+- **P5.48xlarge (H100 80GB)**: Effectively requires Capacity Reservations
+- **P5e.48xlarge (H200)**: Capacity Reservations required
+- **P4de.24xlarge (A100 80GB)**: Reservations required in most regions
+- **P4d.24xlarge (A100 40GB)**: Extremely limited on-demand availability
+- **G6e (L40S)**: Better availability but still constrained
+
+**Without Reservations**: Expect frequent `InsufficientInstanceCapacity` errors for modern GPUs.
+
+ORCA v0.2.0+ will support targeting Capacity Reservations. See [docs/CAPACITY-RESERVATIONS.md](docs/CAPACITY-RESERVATIONS.md) for details.
 
 ### Use Cases
 
