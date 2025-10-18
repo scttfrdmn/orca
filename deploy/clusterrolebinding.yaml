@@ -1,0 +1,16 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: orca
+  labels:
+    app.kubernetes.io/name: orca
+    app.kubernetes.io/component: virtual-kubelet
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: orca
+subjects:
+  - kind: ServiceAccount
+    name: orca
+    namespace: orca-system

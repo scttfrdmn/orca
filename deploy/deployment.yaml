@@ -1,0 +1,160 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orca
+  namespace: orca-system
+  labels:
+    app.kubernetes.io/name: orca
+    app.kubernetes.io/component: virtual-kubelet
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # Only one instance should manage the virtual node
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: orca
+      app.kubernetes.io/component: virtual-kubelet
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: orca
+        app.kubernetes.io/component: virtual-kubelet
+        app.kubernetes.io/version: "0.1.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: orca
+      restartPolicy: Always
+
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: orca
+          image: ghcr.io/scttfrdmn/orca:latest
+          imagePullPolicy: IfNotPresent
+
+          # Security context for container
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
+
+          # Command and args
+          command:
+            - /orca
+          args:
+            - --config=/etc/orca/config.yaml
+            - --node-name=orca-aws-node
+            - --namespace=orca-system
+            - --log-level=info
+
+          # Environment variables
+          env:
+            # AWS credentials from Secret (if not using IRSA)
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: orca-aws-credentials
+                  key: accessKeyID
+                  optional: true
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orca-aws-credentials
+                  key: secretAccessKey
+                  optional: true
+
+            # AWS region from ConfigMap
+            - name: AWS_DEFAULT_REGION
+              value: "us-west-2"
+
+            # Pod metadata
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+          # Volume mounts
+          volumeMounts:
+            - name: config
+              mountPath: /etc/orca
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+
+          # Ports
+          ports:
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
+
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # Resource requests and limits
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+
+      # Volumes
+      volumes:
+        - name: config
+          configMap:
+            name: orca-config
+            defaultMode: 0444
+        - name: tmp
+          emptyDir: {}
+
+      # Node selector (optional - run on control plane nodes)
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+
+      # Tolerations
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule

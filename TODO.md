@@ -50,11 +50,15 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 - `pkg/config`: ❌ No tests
 
 ### Deployment
-- [ ] Create Kubernetes deployment manifest
-- [ ] Create ServiceAccount, Role, RoleBinding manifests
-- [ ] Create ConfigMap for configuration
+- [x] Create Kubernetes deployment manifest
+- [x] Create ServiceAccount, ClusterRole, ClusterRoleBinding manifests
+- [x] Create ConfigMap for configuration
+- [x] Create Secret for AWS credentials
+- [x] Create Service for metrics
+- [x] Create Kustomization for easy deployment
+- [x] Document deployment procedures
 - [ ] Add Helm chart for easy deployment
-- [ ] Document deployment procedures
+- [ ] Create GitHub Actions workflow for container builds
 
 ### Configuration Enhancements
 - [ ] Add kubeconfig flag support when Virtual Kubelet is integrated
@@ -164,6 +168,9 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 - [x] Add LocalStack support and configuration
 - [x] Create LocalStack setup and test scripts
 - [x] Add LocalStack documentation
+- [x] Create Kubernetes deployment manifests
+- [x] Create example pod manifests
+- [x] Document deployment procedures
 - [x] Achieve Go Report Card A+ grade
 - [x] Create GitHub repository
 

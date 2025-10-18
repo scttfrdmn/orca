@@ -74,9 +74,24 @@ When a pod with specific tolerations is scheduled:
 ### Installation
 
 ```bash
-# Coming soon - deployment manifests
-kubectl apply -f https://raw.githubusercontent.com/scttfrdmn/orca/main/deploy/orca.yaml
+# 1. Clone the repository
+git clone https://github.com/scttfrdmn/orca.git
+cd orca
+
+# 2. Edit deploy/configmap.yaml with your AWS settings
+#    - region, vpcID, subnetID, securityGroupIDs
+
+# 3. Configure AWS credentials (IRSA recommended, or edit deploy/secret.yaml)
+
+# 4. Deploy to your cluster
+kubectl apply -k deploy/
+
+# 5. Verify installation
+kubectl get nodes  # Should see orca-aws-node
+kubectl get pods -n orca-system
 ```
+
+See [deploy/README.md](deploy/README.md) for detailed installation instructions.
 
 ### Example: Burst a GPU Job to AWS
 

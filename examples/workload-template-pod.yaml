@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: template-based-job
+  namespace: default
+  annotations:
+    # Use named workload template instead of explicit instance type
+    orca.research/workload-template: "llm-training"
+spec:
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  tolerations:
+    - key: orca.research/burst-node
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  restartPolicy: Never
+
+  containers:
+    - name: workload
+      image: ubuntu:22.04
+      command: ["bash", "-c", "echo 'Using workload template!'; sleep 300"]
+      resources:
+        requests:
+          cpu: "50"
+          memory: "500Gi"
+          nvidia.com/gpu: "8"

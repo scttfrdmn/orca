@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-burst-test
+  namespace: default
+  annotations:
+    # Explicit instance type selection
+    orca.research/instance-type: "t3.small"
+    # Use spot instance for cost savings
+    orca.research/launch-type: "spot"
+spec:
+  # Schedule on ORCA virtual node
+  nodeSelector:
+    orca.research/provider: "aws"
+
+  # Tolerate ORCA node taint
+  tolerations:
+    - key: orca.research/burst-node
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  containers:
+    - name: test
+      image: busybox
+      command: ["sh", "-c", "echo 'Hello from AWS!'; sleep 300"]
+      resources:
+        requests:
+          cpu: "1"
+          memory: "1Gi"

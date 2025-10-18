@@ -1,0 +1,98 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orca-config
+  namespace: orca-system
+  labels:
+    app.kubernetes.io/name: orca
+    app.kubernetes.io/component: virtual-kubelet
+data:
+  config.yaml: |
+    aws:
+      region: us-west-2
+      # VPC/Subnet/SecurityGroup configuration
+      # Replace these with your actual AWS resource IDs
+      vpcID: "vpc-XXXXXXXX"
+      subnetID: "subnet-XXXXXXXX"
+      securityGroupIDs:
+        - "sg-XXXXXXXX"
+
+      # Optional: AMI ID (defaults to Amazon Linux 2023)
+      # amiID: "ami-XXXXXXXX"
+
+      developmentMode: false
+
+    node:
+      name: orca-aws-node
+
+      labels:
+        orca.research/provider: "aws"
+        orca.research/environment: "production"
+        node.kubernetes.io/instance-type: "virtual"
+
+      taints:
+        - key: orca.research/burst-node
+          value: "true"
+          effect: NoSchedule
+
+      operatingSystem: Linux
+      cpu: "1000"      # 1000 cores virtual capacity
+      memory: "2Ti"    # 2 TiB virtual capacity
+      pods: "1000"     # Max 1000 concurrent pods
+      gpu: "100"       # 100 GPUs virtual capacity
+
+    instances:
+      # Selection mode: explicit, template, or auto
+      selectionMode: explicit
+
+      # Named workload templates (used when selectionMode is "template" or "auto")
+      templates:
+        llm-training:
+          instanceType: p5.48xlarge
+          launchType: spot
+
+        vision-training:
+          instanceType: p4d.24xlarge
+          launchType: spot
+
+        inference:
+          instanceType: g5.xlarge
+          launchType: on-demand
+
+      # Default launch type when not specified
+      defaultLaunchType: on-demand
+
+      # Allowed instance types (empty = all allowed)
+      allowedInstanceTypes: []
+
+      # Max spot prices per instance type
+      maxSpotPrices:
+        p5.48xlarge: "32.00"
+        p4d.24xlarge: "24.00"
+        g5.xlarge: "1.50"
+
+    limits:
+      maxConcurrentInstances: 100
+      maxInstancesPerNamespace: 50
+      dailyBudget: 5000.00
+      monthlyBudget: 100000.00
+      maxInstanceLifetime: 24h
+
+    logging:
+      level: info
+      format: json
+      logAWSCalls: false
+
+    metrics:
+      enabled: true
+      port: 8080
+      path: /metrics
+      prometheus:
+        enabled: true
+
+    development:
+      mockAWS: false
+      dryRun: false
+      enableFastCleanup: false
+      cleanupInterval: 5m
