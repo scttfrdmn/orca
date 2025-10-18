@@ -23,14 +23,14 @@ type Config struct {
 
 // AWSConfig contains AWS-specific configuration.
 type AWSConfig struct {
-	Region              string          `yaml:"region"`
-	Credentials         *AWSCredentials `yaml:"credentials,omitempty"`
-	VPCID               string          `yaml:"vpcID"`
-	SubnetID            string          `yaml:"subnetID"`
-	SecurityGroupIDs    []string        `yaml:"securityGroupIDs"`
-	AMIID               string          `yaml:"amiID,omitempty"`
-	LocalStackEndpoint  string          `yaml:"localStackEndpoint,omitempty"`
-	DevelopmentMode     bool            `yaml:"developmentMode"`
+	Region             string          `yaml:"region"`
+	Credentials        *AWSCredentials `yaml:"credentials,omitempty"`
+	VPCID              string          `yaml:"vpcID"`
+	SubnetID           string          `yaml:"subnetID"`
+	SecurityGroupIDs   []string        `yaml:"securityGroupIDs"`
+	AMIID              string          `yaml:"amiID,omitempty"`
+	LocalStackEndpoint string          `yaml:"localStackEndpoint,omitempty"`
+	DevelopmentMode    bool            `yaml:"developmentMode"`
 }
 
 // AWSCredentials contains AWS access credentials.

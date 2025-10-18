@@ -10,6 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
+	"github.com/scttfrdmn/orca/internal/aws"
 	"github.com/scttfrdmn/orca/pkg/config"
 	"github.com/scttfrdmn/orca/pkg/instances"
 )
@@ -22,8 +23,8 @@ type OrcaProvider struct {
 	// Instance selector for choosing EC2 instance types
 	selector instances.Selector
 
-	// AWS client (will be implemented later)
-	// awsClient *aws.Client
+	// AWS client for EC2 operations
+	awsClient *aws.Client
 
 	// Node information
 	nodeName  string
@@ -51,9 +52,17 @@ func NewProvider(cfg *config.Config, nodeName, namespace, version string) (*Orca
 		return nil, fmt.Errorf("failed to create instance selector: %w", err)
 	}
 
+	// Create AWS client
+	ctx := context.Background()
+	awsClient, err := aws.NewClient(ctx, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create AWS client: %w", err)
+	}
+
 	p := &OrcaProvider{
 		config:    cfg,
 		selector:  selector,
+		awsClient: awsClient,
 		nodeName:  nodeName,
 		namespace: namespace,
 		version:   version,
@@ -81,17 +90,8 @@ func (p *OrcaProvider) CreatePod(ctx context.Context, pod *corev1.Pod) error {
 		return fmt.Errorf("failed to select instance type: %w", err)
 	}
 
-	// TODO: Validate budget constraints
-	// TODO: Create EC2 instance via AWS client
-	// TODO: Wait for instance to be running
-	// TODO: Configure networking
-	// TODO: Start container runtime
-
-	// For now, just track the pod
+	// Update pod status to Pending
 	p.podsMu.Lock()
-	defer p.podsMu.Unlock()
-
-	// Store pod with updated status
 	podCopy := pod.DeepCopy()
 	podCopy.Status.Phase = corev1.PodPending
 	podCopy.Status.Conditions = []corev1.PodCondition{
@@ -103,8 +103,42 @@ func (p *OrcaProvider) CreatePod(ctx context.Context, pod *corev1.Pod) error {
 			Message:            fmt.Sprintf("Pod scheduled to ORCA node, launching %s instance", instanceType),
 		},
 	}
-
 	p.pods[pod.UID] = podCopy
+	p.podsMu.Unlock()
+
+	// Create EC2 instance
+	instanceID, err := p.awsClient.CreateInstance(ctx, pod, instanceType)
+	if err != nil {
+		// Update pod status to Failed
+		p.podsMu.Lock()
+		podCopy.Status.Phase = corev1.PodFailed
+		podCopy.Status.Conditions = append(podCopy.Status.Conditions, corev1.PodCondition{
+			Type:               corev1.PodReady,
+			Status:             corev1.ConditionFalse,
+			LastTransitionTime: metav1.Now(),
+			Reason:             "InstanceCreationFailed",
+			Message:            fmt.Sprintf("Failed to create EC2 instance: %v", err),
+		})
+		p.pods[pod.UID] = podCopy
+		p.podsMu.Unlock()
+
+		return fmt.Errorf("failed to create instance: %w", err)
+	}
+
+	// Update pod status to Running
+	p.podsMu.Lock()
+	podCopy.Status.Phase = corev1.PodRunning
+	podCopy.Status.Conditions = append(podCopy.Status.Conditions, corev1.PodCondition{
+		Type:               corev1.PodReady,
+		Status:             corev1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             "InstanceRunning",
+		Message:            fmt.Sprintf("EC2 instance %s is running", instanceID),
+	})
+	podCopy.Status.HostIP = "" // Will be updated when we query instance details
+	podCopy.Status.PodIP = ""  // Will be updated when we query instance details
+	p.pods[pod.UID] = podCopy
+	p.podsMu.Unlock()
 
 	return nil
 }
@@ -136,15 +170,25 @@ func (p *OrcaProvider) DeletePod(ctx context.Context, pod *corev1.Pod) error {
 		return fmt.Errorf("pod cannot be nil")
 	}
 
-	// TODO: Terminate EC2 instance via AWS client
-	// TODO: Wait for instance termination
-	// TODO: Clean up resources
+	// Find the instance for this pod
+	instance, err := p.awsClient.GetInstanceByPod(ctx, pod.Namespace, pod.Name)
+	if err != nil {
+		// Instance not found - pod may have already been cleaned up
+		p.podsMu.Lock()
+		delete(p.pods, pod.UID)
+		p.podsMu.Unlock()
+		return nil
+	}
+
+	// Terminate the instance
+	if err := p.awsClient.TerminateInstance(ctx, instance.ID); err != nil {
+		return fmt.Errorf("failed to terminate instance %s: %w", instance.ID, err)
+	}
 
 	// Remove from tracking
 	p.podsMu.Lock()
-	defer p.podsMu.Unlock()
-
 	delete(p.pods, pod.UID)
+	p.podsMu.Unlock()
 
 	return nil
 }
@@ -170,8 +214,26 @@ func (p *OrcaProvider) GetPodStatus(ctx context.Context, namespace, name string)
 		return nil, err
 	}
 
-	// TODO: Query actual instance status from AWS
-	// TODO: Update pod status based on instance state
+	// Query actual instance status from AWS
+	instance, err := p.awsClient.GetInstanceByPod(ctx, namespace, name)
+	if err == nil {
+		// Update pod status based on instance state
+		switch instance.State {
+		case "running":
+			pod.Status.Phase = corev1.PodRunning
+			pod.Status.HostIP = instance.PublicIP
+			pod.Status.PodIP = instance.PrivateIP
+		case "pending":
+			pod.Status.Phase = corev1.PodPending
+		case "stopping", "stopped", "shutting-down", "terminated":
+			pod.Status.Phase = corev1.PodFailed
+		}
+
+		// Update our cached copy
+		p.podsMu.Lock()
+		p.pods[pod.UID] = pod
+		p.podsMu.Unlock()
+	}
 
 	return &pod.Status, nil
 }
