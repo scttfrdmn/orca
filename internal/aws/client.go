@@ -15,9 +15,17 @@ import (
 	orcaconfig "github.com/scttfrdmn/orca/pkg/config"
 )
 
+// EC2API defines the interface for EC2 operations used by the client.
+// This interface allows for mocking in tests.
+type EC2API interface {
+	RunInstances(ctx context.Context, params *ec2.RunInstancesInput, optFns ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error)
+	TerminateInstances(ctx context.Context, params *ec2.TerminateInstancesInput, optFns ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error)
+	DescribeInstances(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error)
+}
+
 // Client manages AWS EC2 operations for ORCA.
 type Client struct {
-	ec2Client *ec2.Client
+	ec2Client EC2API
 	config    *orcaconfig.Config
 }
 

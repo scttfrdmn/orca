@@ -35,18 +35,18 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 ## High Priority
 
 ### Testing
+- [x] Add unit tests for `internal/aws/client.go` with AWS SDK mocks
 - [ ] Add unit tests for `pkg/provider` with mocks
 - [ ] Add unit tests for `pkg/config` with validation tests
-- [ ] Add unit tests for `internal/aws/client.go` with AWS SDK mocks
 - [ ] Create integration tests using LocalStack
 - [ ] Add end-to-end smoke tests
 - [ ] Set up test coverage reporting
 
 **Current Test Coverage:**
-- `pkg/instances`: ✅ 21 tests passing (100% coverage)
+- `pkg/instances`: ✅ 21 tests passing (explicit, template, auto selectors)
+- `internal/aws`: ✅ 30 tests passing (all helper methods + EC2 operations)
 - `pkg/provider`: ❌ No tests
 - `pkg/config`: ❌ No tests
-- `internal/aws`: ❌ No tests
 
 ### Deployment
 - [ ] Create Kubernetes deployment manifest
@@ -156,6 +156,7 @@ This document tracks pending work, TODOs, and technical debt in the ORCA project
 - [x] Add unit tests for instance selector (21 tests)
 - [x] Create configuration management
 - [x] Implement AWS EC2 client
+- [x] Add unit tests for AWS client with mocks (30 tests)
 - [x] Integrate provider with AWS client
 - [x] Create main application entry point
 - [x] Add LocalStack support
