@@ -1,7 +1,7 @@
 # ORCA Dockerfile
-# Multi-stage build for optimal image size
+# Multi-stage build for minimal, secure container image
 
-# Stage 1: Build
+# Build stage
 FROM golang:1.21-alpine AS builder
 
 # Install build dependencies
@@ -9,42 +9,43 @@ RUN apk add --no-cache git make ca-certificates
 
 WORKDIR /build
 
-# Copy go mod files
+# Copy go mod files first (layer caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy source code
 COPY . .
 
-# Build the binary
-RUN make build
+# Build static binary
+ARG VERSION=dev
+ARG GIT_COMMIT=unknown
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s -X main.version=${VERSION} -X main.gitCommit=${GIT_COMMIT} -X main.buildDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    -trimpath \
+    -o /orca \
+    ./cmd/orca
 
-# Stage 2: Runtime
-FROM alpine:3.19
+# Final stage - distroless for minimal attack surface
+FROM gcr.io/distroless/static-debian12:nonroot
 
-# Install runtime dependencies
-RUN apk add --no-cache ca-certificates
+LABEL org.opencontainers.image.title="ORCA" \
+      org.opencontainers.image.description="Orchestration for Research Cloud Access - Kubernetes Virtual Kubelet for AWS" \
+      org.opencontainers.image.url="https://github.com/scttfrdmn/orca" \
+      org.opencontainers.image.source="https://github.com/scttfrdmn/orca" \
+      org.opencontainers.image.vendor="Scott Friedman" \
+      org.opencontainers.image.licenses="Apache-2.0"
 
-# Create non-root user
-RUN addgroup -S orca && adduser -S orca -G orca
-
-WORKDIR /app
+# Copy CA certificates from builder
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Copy binary from builder
-COPY --from=builder /build/bin/orca /app/orca
+COPY --from=builder /orca /orca
 
-# Copy default configuration
-COPY deploy/kubernetes/config.yaml /app/config.yaml
-
-# Set ownership
-RUN chown -R orca:orca /app
-
-# Switch to non-root user
-USER orca
+# Use nonroot user (UID 65532)
+USER nonroot:nonroot
 
 # Expose metrics port
 EXPOSE 8080
 
-# Set entrypoint
-ENTRYPOINT ["/app/orca"]
-CMD ["--config", "/app/config.yaml"]
+# Run the binary
+ENTRYPOINT ["/orca"]
