@@ -23,14 +23,15 @@ type Config struct {
 
 // AWSConfig contains AWS-specific configuration.
 type AWSConfig struct {
-	Region             string          `yaml:"region"`
-	Credentials        *AWSCredentials `yaml:"credentials,omitempty"`
-	VPCID              string          `yaml:"vpcID"`
-	SubnetID           string          `yaml:"subnetID"`
-	SecurityGroupIDs   []string        `yaml:"securityGroupIDs"`
-	AMIID              string          `yaml:"amiID,omitempty"`
-	LocalStackEndpoint string          `yaml:"localStackEndpoint,omitempty"`
-	DevelopmentMode    bool            `yaml:"developmentMode"`
+	Region             string            `yaml:"region"`
+	Credentials        *AWSCredentials   `yaml:"credentials,omitempty"`
+	VPCID              string            `yaml:"vpcID"`
+	SubnetID           string            `yaml:"subnetID"`
+	SecurityGroupIDs   []string          `yaml:"securityGroupIDs"`
+	AMIID              string            `yaml:"amiID,omitempty"`
+	LocalStackEndpoint string            `yaml:"localStackEndpoint,omitempty"`
+	Tags               map[string]string `yaml:"tags,omitempty"`
+	DevelopmentMode    bool              `yaml:"developmentMode"`
 }
 
 // AWSCredentials contains AWS access credentials.
@@ -225,4 +226,33 @@ func (c *Config) setDefaults() {
 	if c.Metrics.Path == "" {
 		c.Metrics.Path = "/metrics"
 	}
+}
+
+// GetResourceTags returns the combined set of default and user-specified tags.
+// These tags should be applied to all AWS resources created by ORCA.
+func (c *AWSConfig) GetResourceTags() map[string]string {
+	tags := map[string]string{
+		"ManagedBy": "ORCA",
+		"Project":   "orca",
+	}
+
+	// Merge user-specified tags (user tags override defaults)
+	for k, v := range c.Tags {
+		tags[k] = v
+	}
+
+	return tags
+}
+
+// GetPodTags returns tags specific to a pod instance.
+// Includes base resource tags plus pod-specific metadata.
+func (c *AWSConfig) GetPodTags(podNamespace, podName, instanceType string) map[string]string {
+	tags := c.GetResourceTags()
+
+	// Add pod-specific tags
+	tags["orca.research/pod-namespace"] = podNamespace
+	tags["orca.research/pod-name"] = podName
+	tags["orca.research/instance-type"] = instanceType
+
+	return tags
 }

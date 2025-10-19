@@ -1,0 +1,144 @@
+# ORCA Configuration
+# This file is used for local development and testing.
+# In production, use Kubernetes ConfigMap (deploy/configmap.yaml)
+
+aws:
+  # AWS Region
+  region: us-west-2
+
+  # VPC Configuration (default VPC in us-west-2)
+  vpcID: vpc-053e09ab86a3e9bdf
+
+  # Subnet (us-west-2a - public subnet with auto-assign public IP)
+  subnetID: subnet-00e5cb8f78655a3a0
+
+  # Security Groups
+  securityGroupIDs:
+    - sg-003dbf519fdf032e0  # orca-burst-instances
+
+  # Optional: Specify custom AMI (if not set, uses Amazon Linux 2023)
+  # amiID: ami-xxxxxxxxx
+
+  # Optional: For LocalStack testing
+  # localStackEndpoint: http://localhost:4566
+
+  # AWS Resource Tags (applied to all ORCA-created resources)
+  tags:
+    ManagedBy: ORCA
+    Project: orca
+    Environment: production
+    # Additional tags can be added here
+    # CostCenter: research
+    # Department: ml-team
+
+# Virtual Node Configuration
+node:
+  # Node name as it appears in Kubernetes
+  name: orca-aws-node
+
+  # Node labels
+  labels:
+    orca.research/provider: "aws"
+    orca.research/region: "us-west-2"
+    type: virtual-kubelet
+    kubernetes.io/role: agent
+
+  # Node taints (prevents regular pods from scheduling here)
+  taints:
+    - key: orca.research/burst-node
+      value: "true"
+      effect: NoSchedule
+
+  # Operating system
+  operatingSystem: Linux
+
+  # Virtual node capacity (aggregate capacity advertised to K8s)
+  # These are upper bounds - actual capacity determined by running instances
+  cpu: "1000"           # 1000 vCPUs
+  memory: "4Ti"         # 4 TiB memory
+  pods: "1000"          # Max 1000 pods
+  gpu: "100"            # Max 100 GPUs (for GPU instances)
+
+# Instance Selection Configuration
+instances:
+  # Selection mode: explicit (user must specify), template (use predefined templates), auto (ORCA selects)
+  selectionMode: explicit
+
+  # Default launch type if not specified in pod annotations
+  defaultLaunchType: on-demand
+
+  # Optional: Predefined instance templates
+  # templates:
+  #   gpu-large:
+  #     instanceType: p5.48xlarge
+  #     launchType: spot
+  #   cpu-medium:
+  #     instanceType: c7i.24xlarge
+  #     launchType: on-demand
+
+  # Optional: Restrict allowed instance types (empty = all allowed)
+  # allowedInstanceTypes:
+  #   - p5.48xlarge
+  #   - p4d.24xlarge
+  #   - g6e.48xlarge
+
+  # Optional: Maximum spot prices per instance type
+  # maxSpotPrices:
+  #   p5.48xlarge: "35.00"
+  #   p4d.24xlarge: "28.00"
+
+# Resource Limits
+limits:
+  # Maximum concurrent instances
+  maxConcurrentInstances: 50
+
+  # Maximum instances per namespace (for multi-tenancy)
+  maxInstancesPerNamespace: 10
+
+  # Budget limits (optional, 0 = unlimited)
+  dailyBudget: 0
+  monthlyBudget: 0
+
+  # Maximum instance lifetime (optional, omit or comment out for unlimited)
+  # Format: 2h, 24h, etc.
+  # maxInstanceLifetime: 24h
+
+# Logging Configuration
+logging:
+  # Log level: debug, info, warn, error
+  level: info
+
+  # Log format: json, text
+  format: json
+
+  # Log AWS API calls (useful for debugging)
+  logAWSCalls: false
+
+# Metrics Configuration
+metrics:
+  # Enable Prometheus metrics
+  enabled: true
+
+  # Metrics HTTP server port
+  port: 8080
+
+  # Metrics endpoint path
+  path: /metrics
+
+  # Prometheus-specific configuration
+  prometheus:
+    enabled: true
+
+# Development/Testing Configuration
+development:
+  # Use mock AWS clients (for testing without AWS)
+  mockAWS: false
+
+  # Dry-run mode (don't actually create instances)
+  dryRun: false
+
+  # Enable faster cleanup for testing
+  enableFastCleanup: false
+
+  # Cleanup interval for terminated instances
+  cleanupInterval: 5m
