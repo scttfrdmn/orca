@@ -1,19 +1,12 @@
-// Package aws provides AWS EC2 integration for ORCA.
+// Package aws provides AWS EC2 client functionality for ORCA.
 //
-// It handles creating, managing, and terminating EC2 instances for pods.
-// Supports both real AWS and LocalStack for testing.
+// This package wraps the AWS SDK v2 EC2 client and provides ORCA-specific
+// operations for managing EC2 instances, including:
+// - Creating instances with proper tags and configuration
+// - Terminating instances
+// - Querying instance state
+// - Support for both on-demand and spot instances
 //
-// Example usage:
-//
-//	client, err := aws.NewClient(cfg)
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
-//
-//	instanceID, err := client.CreateInstance(ctx, pod)
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
-//
-// The client automatically tags instances for pod tracking and cleanup.
+// The client automatically applies ORCA resource tags to all created instances
+// for proper resource tracking and cost attribution.
 package aws
