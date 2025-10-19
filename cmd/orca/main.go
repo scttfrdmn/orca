@@ -7,9 +7,13 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/scttfrdmn/orca/pkg/config"
-	"github.com/scttfrdmn/orca/pkg/provider"
+	"github.com/scttfrdmn/orca/pkg/node"
 )
 
 var (
@@ -23,15 +27,13 @@ func main() {
 	// Parse command-line flags
 	var (
 		configFile  = flag.String("config", "config.yaml", "path to config file")
+		kubeconfig  = flag.String("kubeconfig", "", "path to kubeconfig file (uses in-cluster config if empty)")
 		nodeName    = flag.String("node-name", "", "name of the virtual node (overrides config)")
 		namespace   = flag.String("namespace", "kube-system", "namespace to run in")
 		showVersion = flag.Bool("version", false, "show version information")
 		logLevel    = flag.String("log-level", "", "log level (overrides config)")
 	)
 	flag.Parse()
-
-	// TODO: Add kubeconfig flag when Virtual Kubelet integration is implemented
-	// kubeconfig := flag.String("kubeconfig", "", "path to kubeconfig file")
 
 	// Show version and exit
 	if *showVersion {
@@ -57,17 +59,28 @@ func main() {
 	}
 
 	// Setup logging
-	setupLogging(cfg.Logging)
+	logger := setupLogging(cfg.Logging)
 
 	// Log startup information
-	log(cfg.Logging.Level, "info", fmt.Sprintf("Starting ORCA version %s", version))
-	log(cfg.Logging.Level, "info", fmt.Sprintf("Node name: %s", cfg.Node.Name))
-	log(cfg.Logging.Level, "info", fmt.Sprintf("Namespace: %s", *namespace))
-	log(cfg.Logging.Level, "info", fmt.Sprintf("AWS region: %s", cfg.AWS.Region))
+	logger.Info().
+		Str("version", version).
+		Str("git_commit", gitCommit).
+		Str("build_date", buildDate).
+		Msg("Starting ORCA")
+
+	logger.Info().
+		Str("node_name", cfg.Node.Name).
+		Str("namespace", *namespace).
+		Str("aws_region", cfg.AWS.Region).
+		Str("vpc_id", cfg.AWS.VPCID).
+		Str("subnet_id", cfg.AWS.SubnetID).
+		Msg("Configuration loaded")
 
 	// Check for LocalStack endpoint
 	if cfg.AWS.LocalStackEndpoint != "" {
-		log(cfg.Logging.Level, "warn", fmt.Sprintf("Using LocalStack endpoint: %s", cfg.AWS.LocalStackEndpoint))
+		logger.Warn().
+			Str("endpoint", cfg.AWS.LocalStackEndpoint).
+			Msg("Using LocalStack for development")
 	}
 
 	// Create context with cancellation
@@ -80,55 +93,80 @@ func main() {
 
 	go func() {
 		sig := <-sigChan
-		log(cfg.Logging.Level, "info", fmt.Sprintf("Received signal %s, shutting down...", sig))
+		logger.Info().Str("signal", sig.String()).Msg("Received shutdown signal")
 		cancel()
 	}()
 
-	// Create provider
-	log(cfg.Logging.Level, "info", "Creating ORCA provider...")
-	_, err = provider.NewProvider(cfg, cfg.Node.Name, *namespace, version)
+	// Create node controller
+	logger.Info().Msg("Creating ORCA node controller")
+	controller, err := node.NewController(cfg, *kubeconfig, *namespace, version, logger)
 	if err != nil {
-		log(cfg.Logging.Level, "error", fmt.Sprintf("Failed to create provider: %v", err))
-		os.Exit(1)
+		logger.Fatal().Err(err).Msg("Failed to create node controller")
 	}
 
-	// TODO: Start Virtual Kubelet node controller
-	// TODO: Register with Kubernetes API server using provider
-	// TODO: Start pod watch loop
-	// TODO: Start metrics server
+	// Start the controller in a goroutine
+	errChan := make(chan error, 1)
+	go func() {
+		if err := controller.Run(ctx); err != nil {
+			errChan <- err
+		}
+		close(errChan)
+	}()
 
-	log(cfg.Logging.Level, "info", "ORCA provider created successfully")
-	log(cfg.Logging.Level, "info", "Virtual node registered: "+cfg.Node.Name)
+	logger.Info().Msg("ORCA is running. Press Ctrl+C to stop.")
 
-	// For now, just wait for shutdown signal
-	log(cfg.Logging.Level, "info", "ORCA is running. Press Ctrl+C to stop.")
+	// Wait for shutdown signal or error
+	select {
+	case <-ctx.Done():
+		logger.Info().Msg("Shutting down...")
+	case err := <-errChan:
+		if err != nil {
+			logger.Error().Err(err).Msg("Controller error")
+		}
+	}
 
-	<-ctx.Done()
+	// Graceful shutdown with timeout
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
 
-	log(cfg.Logging.Level, "info", "ORCA shutdown complete")
+	if err := controller.Shutdown(shutdownCtx); err != nil {
+		logger.Error().Err(err).Msg("Error during shutdown")
+	}
+
+	logger.Info().Msg("ORCA shutdown complete")
 }
 
-// setupLogging configures logging based on configuration
-func setupLogging(cfg config.LoggingConfig) {
-	// TODO: Setup structured logging (logrus, zap, or zerolog)
-	// For now, using simple stdout logging
-}
-
-// log is a simple logging function
-// TODO: Replace with proper structured logging
-func log(level, severity, message string) {
-	// Simple severity filtering
-	severities := map[string]int{
-		"debug": 0,
-		"info":  1,
-		"warn":  2,
-		"error": 3,
+// setupLogging configures zerolog based on configuration.
+func setupLogging(cfg config.LoggingConfig) zerolog.Logger {
+	// Set global log level
+	switch cfg.Level {
+	case "debug":
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	case "info":
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	case "warn":
+		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	case "error":
+		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	default:
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	}
 
-	configLevel := severities[level]
-	msgLevel := severities[severity]
-
-	if msgLevel >= configLevel {
-		fmt.Printf("[%s] %s\n", severity, message)
+	// Configure output format
+	var logger zerolog.Logger
+	if cfg.Format == "json" {
+		// JSON output (default)
+		logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
+	} else {
+		// Human-readable console output
+		logger = log.Output(zerolog.ConsoleWriter{
+			Out:        os.Stdout,
+			TimeFormat: time.RFC3339,
+		})
 	}
+
+	// Set as global logger
+	log.Logger = logger
+
+	return logger
 }
