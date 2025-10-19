@@ -14,6 +14,7 @@ import (
 
 	"github.com/scttfrdmn/orca/pkg/config"
 	"github.com/scttfrdmn/orca/pkg/node"
+	"github.com/scttfrdmn/orca/pkg/server"
 )
 
 var (
@@ -97,6 +98,17 @@ func main() {
 		cancel()
 	}()
 
+	// Create HTTP server for health checks and metrics
+	logger.Info().Msg("Creating HTTP server")
+	httpServer := server.NewServer(cfg, logger)
+
+	// Start HTTP server in background
+	go func() {
+		if err := httpServer.Start(ctx); err != nil {
+			logger.Error().Err(err).Msg("HTTP server error")
+		}
+	}()
+
 	// Create node controller
 	logger.Info().Msg("Creating ORCA node controller")
 	controller, err := node.NewController(cfg, *kubeconfig, *namespace, version, logger)
@@ -113,7 +125,13 @@ func main() {
 		close(errChan)
 	}()
 
-	logger.Info().Msg("ORCA is running. Press Ctrl+C to stop.")
+	// Mark server as ready once node is registered
+	// (Virtual Kubelet node controller returns after registration)
+	httpServer.SetReady(true)
+
+	logger.Info().
+		Int("http_port", cfg.Metrics.Port).
+		Msg("ORCA is running. Press Ctrl+C to stop.")
 
 	// Wait for shutdown signal or error
 	select {
@@ -129,8 +147,14 @@ func main() {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer shutdownCancel()
 
+	// Shutdown HTTP server first (stop accepting new requests)
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
+		logger.Error().Err(err).Msg("HTTP server shutdown error")
+	}
+
+	// Then shutdown node controller
 	if err := controller.Shutdown(shutdownCtx); err != nil {
-		logger.Error().Err(err).Msg("Error during shutdown")
+		logger.Error().Err(err).Msg("Node controller shutdown error")
 	}
 
 	logger.Info().Msg("ORCA shutdown complete")
