@@ -114,15 +114,30 @@ Support multiple departments with separate budgets and cost tracking.
 
 ## Project Status
 
-**Current Phase**: Active Development (v0.1.0-dev)
+**Current Phase**: Alpha Development (v0.1.0-dev)
 
-- ✅ Core architecture designed and implemented
-- ✅ AWS EC2 integration complete
-- ✅ Instance selection (explicit, template, auto)
-- ✅ Virtual Kubelet integration
-- 🚧 Container runtime integration (in progress)
-- ⏳ GPU capacity reservations (v0.2.0)
-- ⏳ kubectl logs/exec (v0.2.0)
+⚠️ **ALPHA SOFTWARE** - ORCA is under active development. **Container execution is not yet implemented** (Issue #8). Pods will be scheduled and EC2 instances will launch, but containers will not run.
+
+### What Works Today ✅
+- Virtual Kubelet node registration and heartbeat
+- EC2 instance lifecycle (create, terminate, query status)
+- Instance selection (explicit, template, auto) - fully tested
+- HTTP server with /healthz, /readyz, /metrics endpoints
+- Configuration validation and AWS SDK integration
+
+### What Doesn't Work Yet ❌
+- **Container execution** (Issue #8) - 🔴 **CRITICAL BLOCKER**
+- kubectl logs (Issue #9) - requires container runtime
+- kubectl exec (Issue #10) - requires container runtime
+- GPU workloads - requires container runtime
+- Pod networking - requires container runtime
+- Volume mounting - requires container runtime
+- Metrics collection (Issue #11)
+
+### Next Steps
+- 🎯 **Priority 1**: Container Runtime Integration (Issue #8)
+- 🎯 **Priority 2**: kubectl logs/exec (Issues #9, #10)
+- 🎯 **Priority 3**: GPU Support and Capacity Reservations (Issue #12)
 
 ## Roadmap
 

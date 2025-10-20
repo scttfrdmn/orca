@@ -19,6 +19,15 @@
 
 ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet provider that allows research Kubernetes clusters to dynamically extend capacity to AWS when local resources are exhausted.
 
+> ⚠️ **ALPHA SOFTWARE - Not Production Ready**
+>
+> ORCA is under active development. **Container execution is not yet implemented** (see Issue #8).
+>
+> **What works**: Virtual Kubelet node registration, EC2 instance lifecycle management, instance selection
+> **What doesn't work**: Container execution, kubectl logs/exec, GPU workloads, production features
+>
+> **Do not use for production workloads.** Follow [Issue #8](https://github.com/scttfrdmn/orca/issues/8) for container runtime implementation progress.
+
 ### Key Features
 
 - 🎓 **Research-First Design** - Built for academic and research workloads
@@ -158,12 +167,21 @@ kubectl get pods -w
 
 ## Project Status
 
-**Current Phase**: Design & Planning
+**Current Phase**: Alpha Development (v0.1.0-dev)
 
-- ✅ Architecture design
-- ✅ Requirements gathering
-- 🚧 Core implementation (in progress)
-- ⏳ Alpha release (planned)
+### Implementation Status
+
+- ✅ Architecture and requirements
+- ✅ Virtual Kubelet integration (node registration, pod scheduling)
+- ✅ EC2 instance lifecycle management
+- ✅ Instance selection (explicit/template/auto with full test coverage)
+- ✅ HTTP server with health checks and metrics endpoint
+- 🚧 **Container Runtime Integration** (Issue #8) - **CRITICAL BLOCKER**
+- ⏳ kubectl logs/exec (Issues #9, #10) - blocked by #8
+- ⏳ GPU support - blocked by #8
+- ⏳ Production features (Phase 2) - not started
+
+**Estimated timeline to functional MVP**: 10-12 weeks (container runtime + logs/exec + GPU support)
 
 This is a **greenfield project** built from scratch with modern tools and patterns, learning from but not forking existing Virtual Kubelet providers.
 
