@@ -4,11 +4,11 @@
   <img src="images/orca-400.png" alt="ORCA Logo" width="400"/>
 </div>
 
-**ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises clusters to AWS, with native support for GPU-intensive AI/ML computing.
+**ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises Kubernetes clusters to AWS, with native support for GPU-intensive AI/ML computing.
 
 ## What is ORCA?
 
-ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet provider that allows research computing clusters to dynamically extend capacity to AWS when local resources are exhausted.
+ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet provider that allows research Kubernetes clusters to dynamically extend capacity to AWS when local resources are exhausted.
 
 ## Key Features
 
@@ -109,7 +109,7 @@ Support multiple departments with separate budgets and cost tracking.
 - **ORCA is GPU-first** - built for AI/ML research
 
 ### vs. Building on Managed K8s
-- **ORCA extends existing clusters** - research institutions already have K8s
+- **ORCA extends existing Kubernetes clusters** - research institutions already have K8s
 - **No migration needed** - burst workloads, keep existing infrastructure
 
 ## Project Status

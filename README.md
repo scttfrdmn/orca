@@ -8,7 +8,7 @@
   [![Go Report Card](https://goreportcard.com/badge/github.com/scttfrdmn/orca)](https://goreportcard.com/report/github.com/scttfrdmn/orca)
   [![Documentation](https://img.shields.io/badge/docs-orcapod.dev-blue)](https://orcapod.dev)
 
-  **ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises clusters to AWS, with native support for GPU-intensive AI/ML computing.
+  **ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises Kubernetes clusters to AWS, with native support for GPU-intensive AI/ML computing.
 
   📖 **[Documentation](https://orcapod.dev)** | 🚀 **[Quick Start](https://orcapod.dev/getting-started/quick-start/)** | 💬 **[Discussions](https://github.com/scttfrdmn/orca/discussions)**
 </div>
@@ -17,7 +17,7 @@
 
 ## Overview
 
-ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet provider that allows research computing clusters to dynamically extend capacity to AWS when local resources are exhausted.
+ORCA (Orchestration for Research Cloud Access) is a Kubernetes Virtual Kubelet provider that allows research Kubernetes clusters to dynamically extend capacity to AWS when local resources are exhausted.
 
 ### Key Features
 
@@ -202,7 +202,7 @@ Native support for National Research Platform features like Ceph storage, multi-
 
 ### vs. Building on Managed K8s
 - **EKS requires managing worker nodes** or using Fargate (no GPUs)
-- **ORCA extends existing clusters** - research institutions already have K8s
+- **ORCA extends existing Kubernetes clusters** - research institutions already have K8s
 - **No migration needed** - burst workloads, keep existing infrastructure
 
 ---
