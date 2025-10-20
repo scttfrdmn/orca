@@ -11,7 +11,6 @@ copyright: Copyright &copy; 2025 Scott Friedman and ORCA Contributors
 
 theme:
   name: material
-  custom_dir: docs/overrides
   logo: images/orca-icon-128.png
   favicon: images/orca-icon-32.png
   palette:
