@@ -114,7 +114,7 @@ Support multiple departments with separate budgets and cost tracking.
 
 ## Project Status
 
-**Current Phase**: Alpha Development (v0.1.0-dev)
+**Current Phase**: Alpha Development
 
 ⚠️ **ALPHA SOFTWARE** - ORCA is under active development. **Container execution is not yet implemented** (Issue #8). Pods will be scheduled and EC2 instances will launch, but containers will not run.
 
