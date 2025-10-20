@@ -124,6 +124,52 @@ Support multiple departments with separate budgets and cost tracking.
 - ⏳ GPU capacity reservations (v0.2.0)
 - ⏳ kubectl logs/exec (v0.2.0)
 
+## Roadmap
+
+ORCA development follows a phased approach aligned with research computing needs. Track our progress on the [GitHub project board](https://github.com/scttfrdmn/orca/projects/3).
+
+### [Phase 1: MVP](https://github.com/scttfrdmn/orca/milestone/1) ✅ Complete
+**Months 1-3**
+
+Core Virtual Kubelet provider with basic pod-to-EC2 mapping and explicit instance selection. Simple lifecycle management.
+
+**Status**: Implementation complete, metrics in progress
+
+### [Phase 2: Production Features](https://github.com/scttfrdmn/orca/milestone/2) 🚧 In Progress
+**Months 4-6**
+
+Production-ready features including:
+- GPU support for all NVIDIA instance types (P6, P5, P4d, G6e)
+- Container runtime integration with containerd
+- kubectl logs and exec via CloudWatch and Systems Manager
+- Spot instance support for cost optimization
+
+[View Phase 2 issues →](https://github.com/scttfrdmn/orca/milestone/2)
+
+### [Phase 3: NRP Integration](https://github.com/scttfrdmn/orca/milestone/4) ⏳ Planned
+**Months 7-9**
+
+National Research Platform integration:
+- Automatic Ceph storage mounting
+- NRP namespace awareness and identity
+- Multi-tenancy with per-namespace quotas
+- Cost tracking and budget enforcement
+
+[View Phase 3 issues →](https://github.com/scttfrdmn/orca/milestone/4)
+
+### [Phase 4: Advanced Features](https://github.com/scttfrdmn/orca/milestone/6) ⏳ Future
+**Months 9+**
+
+Enterprise and advanced capabilities:
+- Intelligent scheduling algorithms
+- Capacity planning and forecasting
+- Compliance features (HIPAA, FedRAMP)
+- Multi-region support
+
+[View Phase 4 issues →](https://github.com/scttfrdmn/orca/milestone/6)
+
+[View all milestones →](https://github.com/scttfrdmn/orca/milestones)
+
 ## Community
 
 - **GitHub**: [scttfrdmn/orca](https://github.com/scttfrdmn/orca)
