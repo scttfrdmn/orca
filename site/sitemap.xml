@@ -1,211 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://scttfrdmn.github.io/orca/</loc>
+         <loc>https://orcapod.dev/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/AWS-CUSTOM-SILICON/</loc>
+         <loc>https://orcapod.dev/CONTRIBUTING/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/CAPACITY-RESERVATIONS/</loc>
+         <loc>https://orcapod.dev/api/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/CONTRIBUTING/</loc>
+         <loc>https://orcapod.dev/api/annotations/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/DEVELOPMENT/</loc>
+         <loc>https://orcapod.dev/api/configuration/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/DOCUMENTATION_SUMMARY/</loc>
+         <loc>https://orcapod.dev/api/metrics/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/LOCALSTACK-TESTING/</loc>
+         <loc>https://orcapod.dev/architecture/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/LOCALSTACK/</loc>
+         <loc>https://orcapod.dev/architecture/aws-integration/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/PROJECT_TEMPLATE_GO_ANALYSIS/</loc>
+         <loc>https://orcapod.dev/architecture/design-decisions/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/QUICK-START/</loc>
+         <loc>https://orcapod.dev/architecture/instance-selection/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/README_PROJECT_TEMPLATE_DOCS/</loc>
+         <loc>https://orcapod.dev/architecture/overview/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/SETUP_SUMMARY/</loc>
+         <loc>https://orcapod.dev/architecture/pod-lifecycle/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/TEMPLATE_IMPLEMENTATION_GUIDE/</loc>
+         <loc>https://orcapod.dev/architecture/virtual-kubelet/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/TEMPLATE_QUICK_REFERENCE/</loc>
+         <loc>https://orcapod.dev/community/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/TESTING/</loc>
+         <loc>https://orcapod.dev/community/license/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/TESTING_STRATEGY/</loc>
+         <loc>https://orcapod.dev/community/roadmap/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/VIRTUAL-KUBELET-INTEGRATION/</loc>
+         <loc>https://orcapod.dev/community/support/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/api/</loc>
+         <loc>https://orcapod.dev/development/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/api/annotations/</loc>
+         <loc>https://orcapod.dev/development/building/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/api/configuration/</loc>
+         <loc>https://orcapod.dev/development/code-style/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/api/metrics/</loc>
+         <loc>https://orcapod.dev/development/contributing/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/</loc>
+         <loc>https://orcapod.dev/development/localstack/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/aws-integration/</loc>
+         <loc>https://orcapod.dev/development/setup/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/design-decisions/</loc>
+         <loc>https://orcapod.dev/development/testing/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/instance-selection/</loc>
+         <loc>https://orcapod.dev/getting-started/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/overview/</loc>
+         <loc>https://orcapod.dev/getting-started/configuration/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/pod-lifecycle/</loc>
+         <loc>https://orcapod.dev/getting-started/first-pod/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/architecture/virtual-kubelet/</loc>
+         <loc>https://orcapod.dev/getting-started/installation/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/community/</loc>
+         <loc>https://orcapod.dev/getting-started/quick-start/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/community/license/</loc>
+         <loc>https://orcapod.dev/includes/abbreviations/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/community/roadmap/</loc>
+         <loc>https://orcapod.dev/user-guide/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/community/support/</loc>
+         <loc>https://orcapod.dev/user-guide/capacity-reservations/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/</loc>
+         <loc>https://orcapod.dev/user-guide/cost-management/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/building/</loc>
+         <loc>https://orcapod.dev/user-guide/custom-silicon/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/code-style/</loc>
+         <loc>https://orcapod.dev/user-guide/gpu-workloads/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/contributing/</loc>
+         <loc>https://orcapod.dev/user-guide/instance-selection/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/localstack/</loc>
+         <loc>https://orcapod.dev/user-guide/spot-instances/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
     <url>
-         <loc>https://scttfrdmn.github.io/orca/development/setup/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/development/testing/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/getting-started/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/getting-started/configuration/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/getting-started/first-pod/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/getting-started/installation/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/getting-started/quick-start/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/capacity-reservations/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/cost-management/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/custom-silicon/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/gpu-workloads/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/instance-selection/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/spot-instances/</loc>
-         <lastmod>2025-10-20</lastmod>
-    </url>
-    <url>
-         <loc>https://scttfrdmn.github.io/orca/user-guide/troubleshooting/</loc>
+         <loc>https://orcapod.dev/user-guide/troubleshooting/</loc>
          <lastmod>2025-10-20</lastmod>
     </url>
 </urlset>

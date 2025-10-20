@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spot-instance-example
+  annotations:
+    # Use spot instances for cost savings
+    orca.research/instance-type: "g6e.12xlarge"  # 4x L40S GPUs
+    orca.research/launch-type: "spot"            # ~70% cheaper than on-demand
+    orca.research/spot-max-price: "5.50"         # Optional: max price per hour
+spec:
+  nodeSelector:
+    orca.research/provider: "aws"
+  tolerations:
+  - key: orca.research/burst-node
+    operator: Equal
+    value: "true"
+    effect: NoSchedule
+  containers:
+  - name: inference
+    image: pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+    command: ["python", "inference.py"]
+    resources:
+      limits:
+        nvidia.com/gpu: 4
+        memory: "256Gi"
+        cpu: "96"
+      requests:
+        nvidia.com/gpu: 4
+        memory: "256Gi"
+        cpu: "96"
+    env:
+    - name: CHECKPOINT_DIR
+      value: "/checkpoints"
+    volumeMounts:
+    - name: checkpoints
+      mountPath: /checkpoints
+  volumes:
+  - name: checkpoints
+    hostPath:
+      path: /mnt/checkpoints
+      type: Directory
+  restartPolicy: Never

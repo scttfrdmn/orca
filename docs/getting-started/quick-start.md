@@ -397,9 +397,9 @@ aws ec2 terminate-instances --instance-ids i-xxxxx
 
 - [GPU Training Example](../examples/gpu-training-pod.yaml)
 - [Spot Instance Example](../examples/spot-instance-pod.yaml)
-- [Architecture Documentation](ARCHITECTURE.md)
-- [Virtual Kubelet Integration](VIRTUAL-KUBELET-INTEGRATION.md)
-- [Instance Selection Guide](INSTANCE_SELECTION.md)
+- [Architecture Documentation](../architecture/overview.md)
+- [Virtual Kubelet Integration](../architecture/virtual-kubelet.md)
+- [Instance Selection Guide](../architecture/instance-selection.md)
 
 ## Getting Help
 

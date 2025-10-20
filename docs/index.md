@@ -183,7 +183,7 @@ Enterprise and advanced capabilities:
 - 📖 [Read the docs](getting-started/index.md)
 - 🐛 [Report issues](https://github.com/scttfrdmn/orca/issues)
 - 💬 [Discussions](https://github.com/scttfrdmn/orca/discussions)
-- 🤝 [Contributing guide](../CONTRIBUTING.md)
+- 🤝 [Contributing guide](CONTRIBUTING.md)
 
 ---
 

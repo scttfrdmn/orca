@@ -54,3 +54,9 @@ orca
 
 # Test
 # Summary test
+
+# Internal planning documents (not for public docs site)
+planning-docs/
+
+# MkDocs build output
+site/
