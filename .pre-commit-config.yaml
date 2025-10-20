@@ -1,0 +1,95 @@
+# Pre-commit hooks for ORCA
+# See https://pre-commit.com for more information
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--unsafe]  # Allow custom YAML tags in mkdocs.yml
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: detect-private-key
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix, --no-sort-keys]
+
+  # Go-specific hooks
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+        args: [-w]
+      - id: go-vet
+      - id: go-imports
+      - id: go-mod-tidy
+      - id: go-unit-tests
+        args: [-short, -race]
+      - id: golangci-lint
+        args: [--timeout=5m]
+
+  # Markdown formatting
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-tables
+          - mdformat-toc
+        args: [--wrap, "80"]
+
+  # Shell script checks
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [-x]
+
+  # Dockerfile linting
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+
+  # YAML formatting
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.13.0
+    hooks:
+      - id: pretty-format-yaml
+        args: [--autofix, --indent, "2"]
+
+  # Security scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--baseline, .secrets.baseline]
+
+# Default language version
+default_language_version:
+  python: python3.11
+  go: 1.25.3
+
+# Run on all files initially
+default_stages: [commit, push]
+
+# Files to exclude
+exclude: |
+  (?x)^(
+    \.git/.*|
+    \.vscode/.*|
+    site/.*|
+    vendor/.*|
+    go\.sum|
+    .*\.min\.(js|css)|
+    docs/overrides/.*
+  )$

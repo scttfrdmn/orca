@@ -1,0 +1,188 @@
+site_name: ORCA
+site_description: Orchestration for Research Cloud Access - Kubernetes Virtual Kubelet for AWS
+site_author: Scott Friedman
+site_url: https://scttfrdmn.github.io/orca
+
+repo_name: scttfrdmn/orca
+repo_url: https://github.com/scttfrdmn/orca
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2025 Scott Friedman and ORCA Contributors
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: images/orca-icon-128.png
+  favicon: images/orca-icon-32.png
+  palette:
+    # Light mode
+    - scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
+    - header.autohide
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.action.edit
+    - content.action.view
+    - announce.dismiss
+
+plugins:
+  - search:
+      lang: en
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true
+
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/scttfrdmn/orca
+      name: ORCA on GitHub
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/mkdocs-material/
+      name: MkDocs Material
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
+  version:
+    provider: mike
+    default: latest
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+nav:
+  - Home: index.md
+
+  - Getting Started:
+    - getting-started/index.md
+    - Quick Start: getting-started/quick-start.md
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+    - First Pod: getting-started/first-pod.md
+
+  - User Guide:
+    - user-guide/index.md
+    - Instance Selection: user-guide/instance-selection.md
+    - GPU Workloads: user-guide/gpu-workloads.md
+    - Spot Instances: user-guide/spot-instances.md
+    - Custom Silicon: user-guide/custom-silicon.md
+    - Capacity Reservations: user-guide/capacity-reservations.md
+    - Cost Management: user-guide/cost-management.md
+    - Troubleshooting: user-guide/troubleshooting.md
+
+  - Architecture:
+    - architecture/index.md
+    - Overview: architecture/overview.md
+    - Virtual Kubelet Integration: architecture/virtual-kubelet.md
+    - Instance Selection: architecture/instance-selection.md
+    - Pod Lifecycle: architecture/pod-lifecycle.md
+    - AWS Integration: architecture/aws-integration.md
+    - Design Decisions: architecture/design-decisions.md
+
+  - Development:
+    - development/index.md
+    - Development Setup: development/setup.md
+    - Building: development/building.md
+    - Testing: development/testing.md
+    - LocalStack Testing: development/localstack.md
+    - Contributing: development/contributing.md
+    - Code Style: development/code-style.md
+
+  - API Reference:
+    - api/index.md
+    - Annotations: api/annotations.md
+    - Configuration: api/configuration.md
+    - Metrics: api/metrics.md
+
+  - Community:
+    - community/index.md
+    - Support: community/support.md
+    - Contributing: CONTRIBUTING.md
+    - Roadmap: community/roadmap.md
+    - License: community/license.md

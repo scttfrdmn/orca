@@ -1,0 +1,104 @@
+/* ORCA Custom Styles */
+
+:root {
+  --orca-blue: #0066cc;
+  --orca-light-blue: #4da6ff;
+  --orca-dark-blue: #004080;
+}
+
+/* Enhanced grid cards */
+.md-typeset .grid.cards > :is(ul, ol) > li {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  transition: border-color 125ms, box-shadow 125ms;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  border-color: var(--orca-blue);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.1);
+}
+
+/* Code block enhancements */
+.md-typeset code {
+  font-size: 0.85em;
+}
+
+.md-typeset pre > code {
+  padding: 1em;
+}
+
+/* Admonition customization */
+.md-typeset :is(.admonition, details) {
+  border-left: 4px solid var(--orca-blue);
+}
+
+/* Logo animation on hover */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  transition: transform 0.3s ease;
+}
+
+.md-header__button.md-logo:hover img,
+.md-header__button.md-logo:hover svg {
+  transform: scale(1.1);
+}
+
+/* Table styling */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 4px;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-default-fg-color--lightest);
+  font-weight: 700;
+}
+
+/* Architecture diagram styling */
+.mermaid {
+  text-align: center;
+  background-color: var(--md-default-bg-color);
+}
+
+/* Custom badge styling */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-primary {
+  background-color: var(--orca-blue);
+  color: white;
+}
+
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Responsive images */
+.md-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Footer customization */
+.md-footer {
+  border-top: 2px solid var(--orca-blue);
+}

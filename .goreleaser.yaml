@@ -1,0 +1,219 @@
+# GoReleaser configuration for ORCA
+# Documentation: https://goreleaser.com
+
+version: 2
+
+project_name: orca
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: orca
+    binary: orca
+    main: ./cmd/orca
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - "7"
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.gitCommit={{.Commit}}
+      - -X main.buildDate={{.Date}}
+    flags:
+      - -trimpath
+
+archives:
+  - id: orca
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README.md
+      - CHANGELOG.md
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: "🚀 New Features"
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "🐛 Bug Fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "📚 Documentation"
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: "⚡ Performance Improvements"
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: "♻️ Code Refactoring"
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: "Other Changes"
+      order: 999
+
+release:
+  github:
+    owner: scttfrdmn
+    name: orca
+  draft: false
+  prerelease: auto
+  mode: append
+  header: |
+    ## ORCA {{ .Tag }} ({{ .Date }})
+
+    **Full Changelog**: https://github.com/scttfrdmn/orca/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+  footer: |
+    ## Installation
+
+    ### Binary Download
+    ```bash
+    # Linux (amd64)
+    curl -L https://github.com/scttfrdmn/orca/releases/download/{{ .Tag }}/orca_{{ .Tag }}_linux_amd64.tar.gz | tar xz
+    sudo mv orca /usr/local/bin/
+
+    # macOS (Apple Silicon)
+    curl -L https://github.com/scttfrdmn/orca/releases/download/{{ .Tag }}/orca_{{ .Tag }}_darwin_arm64.tar.gz | tar xz
+    sudo mv orca /usr/local/bin/
+
+    # macOS (Intel)
+    curl -L https://github.com/scttfrdmn/orca/releases/download/{{ .Tag }}/orca_{{ .Tag }}_darwin_amd64.tar.gz | tar xz
+    sudo mv orca /usr/local/bin/
+    ```
+
+    ### Container Image
+    ```bash
+    docker pull ghcr.io/scttfrdmn/orca:{{ .Tag }}
+    ```
+
+    ---
+
+    **Need help?** Check the [documentation](https://scttfrdmn.github.io/orca) or [open an issue](https://github.com/scttfrdmn/orca/issues/new)
+
+# Docker images
+dockers:
+  - image_templates:
+      - "ghcr.io/scttfrdmn/orca:{{ .Tag }}-amd64"
+      - "ghcr.io/scttfrdmn/orca:latest-amd64"
+    use: buildx
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/scttfrdmn/orca"
+      - "--label=org.opencontainers.image.description=Kubernetes Virtual Kubelet for AWS"
+      - "--label=org.opencontainers.image.licenses=Apache-2.0"
+
+  - image_templates:
+      - "ghcr.io/scttfrdmn/orca:{{ .Tag }}-arm64"
+      - "ghcr.io/scttfrdmn/orca:latest-arm64"
+    use: buildx
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/scttfrdmn/orca"
+      - "--label=org.opencontainers.image.description=Kubernetes Virtual Kubelet for AWS"
+      - "--label=org.opencontainers.image.licenses=Apache-2.0"
+
+docker_manifests:
+  - name_template: "ghcr.io/scttfrdmn/orca:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/scttfrdmn/orca:{{ .Tag }}-amd64"
+      - "ghcr.io/scttfrdmn/orca:{{ .Tag }}-arm64"
+
+  - name_template: "ghcr.io/scttfrdmn/orca:latest"
+    image_templates:
+      - "ghcr.io/scttfrdmn/orca:latest-amd64"
+      - "ghcr.io/scttfrdmn/orca:latest-arm64"
+
+# Homebrew tap (optional - requires separate tap repository)
+brews:
+  - repository:
+      owner: scttfrdmn
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
+    homepage: https://github.com/scttfrdmn/orca
+    description: Kubernetes Virtual Kubelet provider for AWS
+    license: Apache-2.0
+    test: |
+      system "#{bin}/orca --version"
+    install: |
+      bin.install "orca"
+
+# AUR package (Arch Linux)
+aurs:
+  - name: orca-bin
+    homepage: https://github.com/scttfrdmn/orca
+    description: Kubernetes Virtual Kubelet provider for AWS
+    maintainers:
+      - "Scott Friedman <scott@example.com>"
+    license: Apache-2.0
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/orca-bin.git"
+    package: |-
+      # bin
+      install -Dm755 "./orca" "${pkgdir}/usr/bin/orca"
+
+      # license
+      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/orca/LICENSE"
+
+# Announce release
+announce:
+  skip: "{{gt .Patch 0}}"  # Skip patch releases
+
+# SBOMs (Software Bill of Materials)
+sboms:
+  - artifacts: archive
+
+# Signs
+signs:
+  - cmd: cosign
+    env:
+      - COSIGN_EXPERIMENTAL=1
+    certificate: "${artifact}.pem"
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: checksum
+    output: true

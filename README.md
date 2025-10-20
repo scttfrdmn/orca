@@ -1,10 +1,14 @@
-# ORCA - Orchestration for Research Cloud Access
+<div align="center">
+  <img src="docs/images/orca-400.png" alt="ORCA Logo" width="400"/>
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/)
-[![Go Report Card](https://goreportcard.com/badge/github.com/scttfrdmn/orca)](https://goreportcard.com/report/github.com/scttfrdmn/orca)
+  # ORCA - Orchestration for Research Cloud Access
 
-**ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises clusters to AWS, with native support for GPU-intensive AI/ML computing.
+  [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+  [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)](https://go.dev/)
+  [![Go Report Card](https://goreportcard.com/badge/github.com/scttfrdmn/orca)](https://goreportcard.com/report/github.com/scttfrdmn/orca)
+
+  **ORCA** enables research institutions to seamlessly burst Kubernetes workloads from on-premises clusters to AWS, with native support for GPU-intensive AI/ML computing.
+</div>
 
 ---
 

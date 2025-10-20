@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a Question
+    url: https://github.com/scttfrdmn/orca/discussions/new?category=q-a
+    about: Ask questions about using ORCA
+  - name: 💡 Share an Idea
+    url: https://github.com/scttfrdmn/orca/discussions/new?category=ideas
+    about: Suggest new features or improvements (informal discussion before creating issues)
+  - name: 🎉 Show and Tell
+    url: https://github.com/scttfrdmn/orca/discussions/new?category=show-and-tell
+    about: Share your ORCA projects and research workflows
+  - name: 📚 Documentation
+    url: https://scttfrdmn.github.io/orca
+    about: Read the user guides, architecture docs, and tutorials

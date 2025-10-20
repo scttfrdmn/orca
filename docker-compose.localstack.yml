@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  localstack:
+    container_name: orca-localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # External services port range
+    environment:
+      # Services to emulate
+      - SERVICES=ec2,iam,sts,cloudwatch,logs
+      # Configuration
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LOCALSTACK_HOST=localhost:4566
+      # Enable persistence
+      - PERSISTENCE=1
+      - PERSISTENCE_DIR=/var/lib/localstack/data
+      # AWS configuration
+      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      # EC2 configuration
+      - EC2_VM_MANAGER=docker
+      - EC2_DOCKER_FLAGS=-v /var/run/docker.sock:/var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./scripts/localstack:/docker-entrypoint-initaws.d"
+    networks:
+      - orca-test
+
+networks:
+  orca-test:
+    driver: bridge

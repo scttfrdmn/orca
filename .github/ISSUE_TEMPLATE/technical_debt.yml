@@ -1,0 +1,129 @@
+name: 🔧 Technical Debt
+description: Propose code refactoring or technical improvement
+title: "[Tech Debt]: "
+labels: ["technical-debt", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve ORCA's codebase quality and maintainability!
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Code Area
+      description: Which part of the codebase needs improvement?
+      options:
+        - cmd/orca (Main entry point)
+        - pkg/provider (Virtual Kubelet provider)
+        - pkg/instances (Instance selection)
+        - pkg/config (Configuration)
+        - pkg/node (Node controller)
+        - pkg/server (HTTP server)
+        - internal/aws (AWS client)
+        - Testing infrastructure
+        - Build/CI system
+        - Documentation code examples
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of Technical Debt
+      description: What kind of improvement is this?
+      options:
+        - Code Refactoring
+        - Performance Optimization
+        - Error Handling Improvement
+        - Test Coverage
+        - Code Duplication
+        - Design Pattern Improvement
+        - Dependency Update
+        - Security Improvement
+        - Logging/Observability
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe the current implementation and why it's problematic
+      placeholder: |
+        Currently, the code in pkg/provider/provider.go:123-145 does...
+        This is problematic because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Proposed Improvement
+      description: How would you improve this?
+      placeholder: |
+        We should refactor this to...
+        Benefits:
+        - Better maintainability
+        - Improved performance
+        - Easier testing
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking Change
+      description: Would this refactoring break existing functionality?
+      options:
+        - No (internal refactoring only)
+        - Yes (public API changes)
+        - Possibly (needs investigation)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this improvement?
+      options:
+        - Critical - Causing production issues
+        - High - Significantly impacts development
+        - Medium - Should be addressed eventually
+        - Low - Nice to have
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What benefits would this improvement provide?
+      placeholder: |
+        - Easier to add new instance types
+        - Better test coverage
+        - Improved error messages
+    validations:
+      required: true
+
+  - type: textarea
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much work do you think this would take?
+      placeholder: |
+        - Small (few hours)
+        - Medium (1-3 days)
+        - Large (1+ weeks)
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related Issues/PRs
+      description: Link to related issues, PRs, or TODOs
+      placeholder: |
+        Related to #123
+        See TODO in file.go:456

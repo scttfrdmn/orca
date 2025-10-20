@@ -1,0 +1,138 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us diagnose and fix the issue.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of ORCA is affected?
+      options:
+        - Virtual Kubelet Provider
+        - AWS Integration
+        - Instance Selection
+        - Pod Lifecycle
+        - Configuration
+        - Documentation
+        - Deployment/Kubernetes
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Deploy ORCA with config '...'
+        2. Create pod with annotation '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: The pod should be scheduled to AWS...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, the pod remained pending...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: ORCA Version
+      description: Run `kubectl get deployment -n orca-system orca -o jsonpath='{.spec.template.spec.containers[0].image}'`
+      placeholder: v0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: k8s-version
+    attributes:
+      label: Kubernetes Version
+      description: Run `kubectl version --short`
+      placeholder: v1.28.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: aws-region
+    attributes:
+      label: AWS Region
+      description: Which AWS region were you using?
+      options:
+        - us-east-1
+        - us-east-2
+        - us-west-1
+        - us-west-2
+        - eu-west-1
+        - eu-west-2
+        - eu-central-1
+        - ap-southeast-1
+        - ap-northeast-1
+        - ap-south-1
+        - Other
+
+  - type: input
+    id: instance-type
+    attributes:
+      label: Instance Type (if applicable)
+      description: What EC2 instance type were you trying to use?
+      placeholder: p5.48xlarge, g6e.48xlarge, etc.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: ORCA Logs
+      description: Please paste relevant log output from ORCA pod
+      placeholder: |
+        kubectl logs -n orca-system deployment/orca --tail=100
+      render: shell
+
+  - type: textarea
+    id: pod-events
+    attributes:
+      label: Pod Events
+      description: Paste output of `kubectl describe pod <pod-name>`
+      render: shell
+
+  - type: textarea
+    id: config
+    attributes:
+      label: ORCA Configuration (Redacted)
+      description: Your ORCA config (REMOVE sensitive data like credentials!)
+      render: yaml
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us debug this issue
+      placeholder: Screenshots, error messages, pod manifests, etc.
