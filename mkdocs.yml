@@ -1,7 +1,7 @@
 site_name: ORCA
 site_description: Orchestration for Research Cloud Access - Kubernetes Virtual Kubelet for AWS
 site_author: Scott Friedman
-site_url: https://scttfrdmn.github.io/orca
+site_url: https://orcapod.dev
 
 repo_name: scttfrdmn/orca
 repo_url: https://github.com/scttfrdmn/orca

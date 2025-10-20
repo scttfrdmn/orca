@@ -172,8 +172,10 @@ Enterprise and advanced capabilities:
 
 ## Community
 
+- **Website**: [orcapod.dev](https://orcapod.dev)
 - **GitHub**: [scttfrdmn/orca](https://github.com/scttfrdmn/orca)
 - **Issues**: [Report bugs or request features](https://github.com/scttfrdmn/orca/issues)
+- **Discussions**: [Questions and ideas](https://github.com/scttfrdmn/orca/discussions)
 - **License**: [Apache 2.0](https://github.com/scttfrdmn/orca/blob/main/LICENSE)
 
 ## Getting Help
@@ -181,7 +183,7 @@ Enterprise and advanced capabilities:
 - 📖 [Read the docs](getting-started/index.md)
 - 🐛 [Report issues](https://github.com/scttfrdmn/orca/issues)
 - 💬 [Discussions](https://github.com/scttfrdmn/orca/discussions)
-- 🤝 [Contributing guide](CONTRIBUTING.md)
+- 🤝 [Contributing guide](../CONTRIBUTING.md)
 
 ---
 
